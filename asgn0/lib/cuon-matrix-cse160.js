@@ -147,9 +147,11 @@ class Vector3 {
     normalize() {
         // Insert your code here.
         // This function should change this vector (this.elements) and not create a new vector.
-        this.elements[0] /= this.magnitude;
-        this.elements[1] /= this.magnitude;
-        this.elements[2] /= this.magnitude;
+        const mag = this.magnitude();
+        if (mag == 0) return this;
+        this.elements[0] /= mag;
+        this.elements[1] /= mag;
+        this.elements[2] /= mag;
         // Don't delete the return statement.
         return this;
     };
