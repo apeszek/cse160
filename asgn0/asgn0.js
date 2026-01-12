@@ -58,3 +58,51 @@ function main() {
     let v2 = new Vector3([x2, y2, 0]);
     drawVector(ctx, v2, "blue");
   }
+
+  //creates handleDrawOperationEvent function
+  function handleDrawOperationEvent(){
+    var canvas = document.getElementById('example');
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = "black"; //Sets to black
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill a rectangle with the color
+
+    //reads and calls v1 and v2
+    let x = parseFloat(document.getElementById("xInput").value);
+    let y = parseFloat(document.getElementById("yInput").value);
+    let v1 = new Vector3([x, y, 0]);
+    drawVector(ctx, v1, "red");
+
+    let x2 = parseFloat(document.getElementById("x2Input").value);
+    let y2 = parseFloat(document.getElementById("y2Input").value);
+    let v2 = new Vector3([x2, y2, 0]);
+    drawVector(ctx, v2, "blue");
+
+    //reads operation
+    let operation = document.getElementById("selectedOp").value;
+    let scalar = parseFloat(document.getElementById("scalarInput").value);
+
+    //diff operations
+    //add
+    if (operation == "add") {
+      let v3 = new Vector3([v1.elements[0], v1.elements[1], 0]);
+      v3.add(v2);
+      drawVector(ctx, v3, "green");
+    //sub
+    } else if(operation == "sub"){
+      let v3 = new Vector3([v1.elements[0], v1.elements[1], 0]);
+      v3.sub(v2);
+      drawVector(ctx, v3, "green");
+    //div
+    } else if(operation == "div"){
+      let v3 = new Vector3([v1.elements[0], v1.elements[1], 0]).div(scalar);
+      let v4 = new Vector3([v2.elements[0], v2.elements[1], 0]).div(scalar);
+      drawVector(ctx, v3, "green");
+      drawVector(ctx, v4, "green");
+    //mult
+    } else if (operation == "mul"){
+      let v3 = new Vector3([v1.elements[0], v1.elements[1], 0]).mul(scalar);
+      let v4 = new Vector3([v2.elements[0], v2.elements[1], 0]).mul(scalar);
+      drawVector(ctx, v3, "green");
+      drawVector(ctx, v4, "green");
+    }
+  }
