@@ -119,9 +119,13 @@ function main() {
     } else if(operation == "ang"){
       let angle = angleBetween(v1, v2);
       console.log("Angle:", angle);
+    //triangle area
+    } else if (operation == "area"){
+      let area = areaTriangle(v1, v2);
+      console.log("Area of the triangle:", area);
     }
+  } //ends handleDrawOperationEvent function
 
-  }
       //angle between function
   function angleBetween(v1, v2){
     let dot = Vector3.dot(v1, v2);
@@ -129,4 +133,10 @@ function main() {
     let mag2 = v2.magnitude();
     let cosA = dot / (mag1 * mag2);
     return Math.acos(cosA) * (180/Math.PI)
+  }
+
+  //area triangle function
+  function areaTriangle(v1, v2){
+    let cross = Vector3.cross(v1, v2);
+    return 0.5 * cross.magnitude();
   }
