@@ -104,5 +104,17 @@ function main() {
       let v4 = new Vector3([v2.elements[0], v2.elements[1], 0]).mul(scalar);
       drawVector(ctx, v3, "green");
       drawVector(ctx, v4, "green");
+    //mag
+    } else if (operation == "mag"){
+      //prints operations to console
+      console.log("Magnitue V1:", v1.magnitude());
+      console.log("Magnitude v2:", v2.magnitude());
+    //norm
+    } else if (operation == "norm"){
+      let v3 = new Vector3([v1.elements[0], v1.elements[1], 0]).normalize();
+      let v4 = new Vector3([v2.elements[0], v2.elements[1], 0]).normalize();
+      drawVector(ctx, v3, "green");
+      drawVector(ctx, v4, "green");
     }
+
   }
