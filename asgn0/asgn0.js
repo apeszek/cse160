@@ -115,6 +115,18 @@ function main() {
       let v4 = new Vector3([v2.elements[0], v2.elements[1], 0]).normalize();
       drawVector(ctx, v3, "green");
       drawVector(ctx, v4, "green");
+    //angle bw
+    } else if(operation == "ang"){
+      let angle = angleBetween(v1, v2);
+      console.log("Angle:", angle);
     }
 
+  }
+      //angle between function
+  function angleBetween(v1, v2){
+    let dot = Vector3.dot(v1, v2);
+    let mag1 = v1.magnitude();
+    let mag2 = v2.magnitude();
+    let cosA = dot / (mag1 * mag2);
+    return Math.acos(cosA) * (180/Math.PI)
   }
