@@ -59,6 +59,19 @@ function connectVariablesToGLSL(){
   }
 }
 
+let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
+
+//Actions for HTML UI Elements
+function actionsforHTML(){
+  //Buttons - Colors
+  document.getElementById('green').onclick = function() {g_selectedColor = [0.0, 1.0, 0.0, 1.0]; };
+  document.getElementById('red').onclick = function() {g_selectedColor = [1.0, 0.0, 0.0, 1.0]; };
+
+  //Sliders - Colors
+  document.getElementById('redSlide').addEventListener('mouseup', function(){g_selectedColor[0] = this.value/100;});
+  document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
+  document.getElementById('blueSlide').addEventListener('mouseup', function(){g_selectedColor[2] = this.value/100;});
+}
 //MAIN
 function main() {
   //calls function to set up webGL
@@ -66,6 +79,9 @@ function main() {
 
   //calls function to set up GLSL
   connectVariablesToGLSL();
+
+  //calls HTML action function
+  actionsforHTML();
 
   // Register function (event handler) to be called on a mouse press
   // calls click function,
@@ -89,6 +105,10 @@ function click(ev) {
   // Store the coordinates to g_points array
   g_points.push([x, y]);
   // Store the coordinates to g_points array
+  
+  g_colors.push(g_selectedColor.slice());
+
+  /*
   if (x >= 0.0 && y >= 0.0) {      // First quadrant
     g_colors.push([1.0, 0.0, 0.0, 1.0]);  // Red
   } else if (x < 0.0 && y < 0.0) { // Third quadrant
@@ -96,7 +116,8 @@ function click(ev) {
   } else {                         // Others
     g_colors.push([1.0, 1.0, 1.0, 1.0]);  // White
   }
-  
+  */
+
   //calls function to renderAllShapes
   // draws every shape supposed to be in the screen
   renderAllShapes();
