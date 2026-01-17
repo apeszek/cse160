@@ -24,9 +24,15 @@ let a_Position;
 let u_FragColor;
 let u_Size;
 
+const POINT = 0;
+const TRIANGLE = 1;
+
 //GlOBALS (RELATED TO UI)
 let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
 let g_selectedSize = 5;
+let g_selectedType = POINT;
+
+
 
 //function to set up WebGL
 function setUpWebGL(){
@@ -79,6 +85,10 @@ function actionsforHTML(){
   document.getElementById('green').onclick = function() {g_selectedColor = [0.0, 1.0, 0.0, 1.0]; };
   document.getElementById('red').onclick = function() {g_selectedColor = [1.0, 0.0, 0.0, 1.0]; };
   document.getElementById('clear').onclick = function() {g_shapesList = []; renderAllShapes();};
+
+  //Buttons - Shape 
+  document.getElementById('point').onclick = function() {g_selectedType = POINT; };
+  document.getElementById('triangle').onclick = function() {g_selectedType = TRIANGLE; };
   //Sliders - Colors
   document.getElementById('redSlide').addEventListener('mouseup', function(){g_selectedColor[0] = this.value/100;});
   document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
@@ -125,7 +135,12 @@ function click(ev) {
   let [x, y] = convertCoordEventToGL(ev);
 
   //pushes the new data to a new point
-  let point = new Point();
+  let point;
+  if (g_selectedType == POINT){
+    point = new Point();
+  } else {
+    point = new Triangle();
+  }
   point.position = [x,y];
   point.color = g_selectedColor.slice();
   point.size = g_selectedSize;
@@ -149,9 +164,6 @@ function convertCoordEventToGL(ev){
 
 //function to render all shapes
 function renderAllShapes(){
-  // check time at start of function
-  var startTime = performance.now();
-
     // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -161,6 +173,4 @@ function renderAllShapes(){
     g_shapesList[i].render();
   }
 
-  //cgeck time at end of function
-  var duration = performance.now() - startTime;
 }
