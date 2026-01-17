@@ -71,14 +71,14 @@ function connectVariablesToGLSL(){
     console.log('Failed to get the storage location of u_Size');
     return;
   }
-}// end function 
+}// end function to connect variable to GLSL
 
 //Actions for HTML UI Elements
 function actionsforHTML(){
-  //Buttons - Colors
+  //Buttons - Colors + Clear
   document.getElementById('green').onclick = function() {g_selectedColor = [0.0, 1.0, 0.0, 1.0]; };
   document.getElementById('red').onclick = function() {g_selectedColor = [1.0, 0.0, 0.0, 1.0]; };
-
+  document.getElementById('clear').onclick = function() {g_shapesList = []; renderAllShapes();};
   //Sliders - Colors
   document.getElementById('redSlide').addEventListener('mouseup', function(){g_selectedColor[0] = this.value/100;});
   document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
