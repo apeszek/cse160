@@ -5,7 +5,6 @@ var VSHADER_SOURCE = `
   uniform float u_Size;
   void main() {
     gl_Position = a_Position;
-    //gl_PointSize = 20.0;
     gl_PointSize = u_Size;
   }`
 
@@ -32,6 +31,7 @@ const CIRCLE = 2;
 let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
 let g_selectedSize = 5;
 let g_selectedType = POINT;
+let g_selectedSeg = 10; 
 
 
 
@@ -96,9 +96,9 @@ function actionsforHTML(){
   document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
   document.getElementById('blueSlide').addEventListener('mouseup', function(){g_selectedColor[2] = this.value/100;});
 
-  //Slider - Shape Size
+  //Slider - Shape Size + # of Segments
   document.getElementById('sizeSlide').addEventListener('mouseup', function(){g_selectedSize = this.value;});
-
+  document.getElementById('segSlide').addEventListener('mouseup', function(){g_selectedSeg = Number(this.value);});
 
 }
 //MAIN
@@ -127,9 +127,6 @@ function main() {
 
 // initializes array to store the shapes
 var g_shapesList = [];
-//var g_points = [];  // The array for the position of a mouse press
-//var g_colors = [];  // The array to store the color of a point
-//var g_sizes = []; //The array to store the size of a point
 
 // click function
 function click(ev) {
@@ -144,6 +141,7 @@ function click(ev) {
     point = new Triangle();
   } else if (g_selectedType == CIRCLE){
     point = new Circle();
+    point.segments = g_selectedSeg;
   }
   point.position = [x,y];
   point.color = g_selectedColor.slice();
