@@ -26,6 +26,7 @@ let u_Size;
 
 const POINT = 0;
 const TRIANGLE = 1;
+const CIRCLE = 2;
 
 //GlOBALS (RELATED TO UI)
 let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
@@ -89,6 +90,7 @@ function actionsforHTML(){
   //Buttons - Shape 
   document.getElementById('point').onclick = function() {g_selectedType = POINT; };
   document.getElementById('triangle').onclick = function() {g_selectedType = TRIANGLE; };
+  document.getElementById('circle').onclick = function() {g_selectedType = CIRCLE; };
   //Sliders - Colors
   document.getElementById('redSlide').addEventListener('mouseup', function(){g_selectedColor[0] = this.value/100;});
   document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
@@ -138,8 +140,10 @@ function click(ev) {
   let point;
   if (g_selectedType == POINT){
     point = new Point();
-  } else {
+  } else if (g_selectedType == TRIANGLE){
     point = new Triangle();
+  } else if (g_selectedType == CIRCLE){
+    point = new Circle();
   }
   point.position = [x,y];
   point.color = g_selectedColor.slice();
