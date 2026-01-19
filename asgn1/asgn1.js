@@ -28,12 +28,14 @@ const TRIANGLE = 1;
 const CIRCLE = 2;
 
 //GlOBALS (RELATED TO UI)
-let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
-let g_selectedSize = 5;
+let g_selectedColor = [1.0, 1.0, 1.0, 0.3];
+let g_selectedSize = 20;
 let g_selectedType = POINT;
 let g_selectedSeg = 10; 
 
-
+// initializes array to store the shapes
+var g_shapesList = [];
+var g_stack = [];
 
 //function to set up WebGL
 function setUpWebGL(){
@@ -82,10 +84,15 @@ function connectVariablesToGLSL(){
 
 //Actions for HTML UI Elements
 function actionsforHTML(){
-  //Buttons - Colors + Clear
+  //Buttons - Colors
   document.getElementById('green').onclick = function() {g_selectedColor = [0.0, 1.0, 0.0, 1.0]; };
   document.getElementById('red').onclick = function() {g_selectedColor = [1.0, 0.0, 0.0, 1.0]; };
-  document.getElementById('clear').onclick = function() {g_shapesList = []; renderAllShapes();};
+ 
+  //Buttons - Clear, Redo, Undo
+  document.getElementById('clear').onclick = function() {g_shapesList = []; g_stack = []; renderAllShapes();};
+  document.getElementById('undo').onclick = undo;
+  document.getElementById('redo').onclick = redo;
+
 
   //Buttons - Shape 
   document.getElementById('point').onclick = function() {g_selectedType = POINT; };
@@ -95,12 +102,36 @@ function actionsforHTML(){
   document.getElementById('redSlide').addEventListener('mouseup', function(){g_selectedColor[0] = this.value/100;});
   document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
   document.getElementById('blueSlide').addEventListener('mouseup', function(){g_selectedColor[2] = this.value/100;});
+  document.getElementById('alphaSlide').addEventListener('mouseup', function(){g_selectedColor[3] = this.value/100;});
 
   //Slider - Shape Size + # of Segments
   document.getElementById('sizeSlide').addEventListener('mouseup', function(){g_selectedSize = this.value;});
   document.getElementById('segSlide').addEventListener('mouseup', function(){g_selectedSeg = Number(this.value);});
 
 }
+
+//implements function for undo button
+function undo() {
+  if (g_shapesList.length == 0){
+    return;
+  }
+  const last = g_shapesList.pop();
+  g_stack.push(last);
+
+  renderAllShapes();
+}
+
+//implements function for redo button
+function redo(){
+  if (g_stack.length == 0){
+    return;
+  }
+  const shape = g_stack.pop();
+  g_shapesList.push(shape);
+  
+  renderAllShapes();
+}
+
 //MAIN
 function main() {
   //calls function to set up webGL
@@ -118,15 +149,15 @@ function main() {
 
   canvas.onmousemove = function(ev) { if (ev.buttons == 1) {click(ev) }};
 
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 }
-
-// initializes array to store the shapes
-var g_shapesList = [];
 
 // click function
 function click(ev) {
@@ -146,6 +177,7 @@ function click(ev) {
   point.position = [x,y];
   point.color = g_selectedColor.slice();
   point.size = g_selectedSize;
+  g_stack = [];
   g_shapesList.push(point);
 
   //calls function to renderAllShapes
