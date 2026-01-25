@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>CSE160 Assignment 1: Painting</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+    <br>
+    Colors Options:
+    <button  type="button" id="green">Green</button>
+    <button  type="button" id="red">Red</button>
+    <br>
+    <br>
+    Edit Options:
+    <button  type="button" id="clear">Clear</button>
+    <button  type="button" id="undo">Undo</button>
+    <button  type="button" id="redo">Redo</button>
+
+    <br>
+    <br>
+    Shape Options:
+    <button  type="button" id="point">Point</button>
+    <button  type="button" id="triangle">Triangle</button>
+    <button  type="button" id="circle">Circle</button>
+    
+    <p>
+    Transparency <input type="range" min="0" max="100" value="100" class="slider" id="alphaSlide">
+    <p>
+    Red <input type="range" min="0" max="100" value="100" class="slider" id="redSlide">
+    <p>
+    Green <input type="range" min="0" max="100" value="100" class="slider" id="greenSlide">
+    <p>
+    Blue <input type="range" min="0" max="100" value="100" class="slider" id="blueSlide">
+    <p>
+    Shape Size <input type="range" min="5" max="40" value="10" class="slider" id="sizeSlide">
+    <p> 
+    Number of Segments in Circle <input type="range" min="10" max="40" value="10" class="slider" id="segSlide">
+
+
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="point.js"></script>
+    <script src="triangle.js"></script>
+    <script src="cube.js"></script>
+    <script src="circle.js"></script>
+    <script src="blockyAnimal.js"></script>
+    <br>
+    <br>
+    **To improve my web application I made sure to include features a slider to adjust the transparency of the colors. 
+      I did this by editing the alpha value of my color values to have the paint get darker if the pixel was painted over.
+      Additionally, another feature I added was an undo and a redo button that allowed the user to go back if they made a
+      mistake while drawing without having to completely clear the canvas. This feature can be clicked as many times as possible 
+      in order to remove whatever they had just created. 
+  </body>
+</html>
