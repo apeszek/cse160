@@ -239,7 +239,7 @@ function renderAllShapes(){
   leftArm.matrix.setTranslate(0.7, 0, 0);
   leftArm.matrix.rotate(45, 0, 0, 1);
   leftArm.matrix.scale(0.25, 0.7, 0.5);
-  //leftArm.render();
+  leftArm.render();
 
   //draws test box (purple)
   var leftArm = new Cube();
