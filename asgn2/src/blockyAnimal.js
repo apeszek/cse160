@@ -2,10 +2,9 @@
 // Vertex Shader Program
 var VSHADER_SOURCE = `
   attribute vec4 a_Position;
-  uniform float u_Size;
+  uniform mat4 u_ModelMatrix;
   void main() {
-    gl_Position = a_Position;
-    gl_PointSize = u_Size;
+    gl_Position = u_ModelMatrix * a_Position;
   }`
 
 // Fragment shader program
@@ -28,7 +27,7 @@ const TRIANGLE = 1;
 const CIRCLE = 2;
 
 //GlOBALS (RELATED TO UI)
-let g_selectedColor = [1.0, 1.0, 1.0, 0.3];
+let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
 let g_selectedSize = 20;
 let g_selectedType = POINT;
 let g_selectedSeg = 10; 
@@ -74,10 +73,10 @@ function connectVariablesToGLSL(){
     return;
   }
 
-  //Get the storage location of u_Size
-  u_Size = gl.getUniformLocation(gl.program, 'u_Size');
-  if (!u_Size) {
-    console.log('Failed to get the storage location of u_Size');
+  //Get the storage location of u_ModelMatrix
+  u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+  if (!u_ModelMatrix) {
+    console.log('Failed to get the storage location of u_ModelMatrix');
     return;
   }
 }// end function to connect variable to GLSL
@@ -149,8 +148,9 @@ function main() {
 
   canvas.onmousemove = function(ev) { if (ev.buttons == 1) {click(ev) }};
 
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  //Transparency values
+  //gl.enable(gl.BLEND);
+  //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -212,7 +212,18 @@ function renderAllShapes(){
   //draw test triangle 
   drawTriangle3D([ -1.0, 0.0, 0.0,  -0.5, -1.0, 0.0,  0.0, 0.0, 0.0]);
 
+  //draws the body (red)
   var body = new Cube();
-  body.color = [1.0,0.0, 0.0, 1.0];
+  body.color = [1.0, 0.0, 0.0, 1.0];
+  body.matrix.translate(-0.25, -0.5, 0.0);
+  body.matrix.scale(0.5, 1, 0.5);
   body.render();
+
+  //draws the arm (yellow)
+  var leftArm = new Cube();
+  leftArm.color = [1.0, 1.0, 0.0, 1.0];
+  leftArm.matrix.translate(0.7, 0, 0);
+  leftArm.matrix.rotate(45, 0, 0, 1);
+  leftArm.matrix.scale(0.25, 0.7, 0.5);
+  leftArm.render();
 }
