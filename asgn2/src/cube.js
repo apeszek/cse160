@@ -33,12 +33,12 @@ class Cube {
 
     //Draw: back - GOOD
     //pass the color of a point to u_FragColor uniform variable
-    gl.uniform4f(u_FragColor, rgba[0]*.5, rgba[1]*.5, rgba[2]*.5, rgba[3]);
+    gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
     drawTriangle3D([0,1,1,   1, 0, 1,  0, 0, 1]);
     drawTriangle3D([0,1,1,   1, 1, 1,  1, 0, 1]);
 
     //Draw: bottom - GOOD
-    gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
+    gl.uniform4f(u_FragColor, rgba[0]*.95, rgba[1]*.95, rgba[2]*.95, rgba[3]);
     drawTriangle3D([0,0,0,   1, 0, 1,  1, 0, 0]);
     drawTriangle3D([1,0,1,   0, 0, 1,  0, 0, 0]);
 

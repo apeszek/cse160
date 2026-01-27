@@ -46,12 +46,13 @@ function setUpWebGL(){
   canvas = document.getElementById('webgl');
 
   // Get the rendering context for WebGL
-  gl = getWebGLContext(canvas);
-  //gl = canvas.getContext('webgl', { preserveDrawingBuffer: true});
+  //gl = getWebGLContext(canvas);
+  gl = canvas.getContext('webgl', { preserveDrawingBuffer: true});
   if (!gl) {
     console.log('Failed to get the rendering context for WebGL');
     return;
   }
+  gl.enable(gl.DEPTH_TEST);
 }
 
 //function to connect variables to GLSL
@@ -133,7 +134,7 @@ function undo() {
   const last = g_shapesList.pop();
   g_stack.push(last);
 
-  renderAllShapes();
+  renderScene();
 }
 
 //implements function for redo button
@@ -144,7 +145,7 @@ function redo(){
   const shape = g_stack.pop();
   g_shapesList.push(shape);
   
-  renderAllShapes();
+  renderScene();
 }
 
 //MAIN
@@ -224,8 +225,8 @@ function renderScene(){
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
   // Clear <canvas>
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.clear(gl.COLOR_BUFFER_BIT);
-
   //draw test triangle 
   //drawTriangle3D([ -1.0, 0.0, 0.0,  -0.5, -1.0, 0.0,  0.0, 0.0, 0.0]);
 
@@ -242,7 +243,7 @@ function renderScene(){
   leftArm.matrix.setTranslate(0.7, 0, 0);
   leftArm.matrix.rotate(45, 0, 0, 1);
   leftArm.matrix.scale(0.25, 0.7, 0.5);
-  //leftArm.render();
+  leftArm.render();
 
   //draws test box (purple)
   var leftArm = new Cube();
