@@ -3,8 +3,9 @@
 var VSHADER_SOURCE = `
   attribute vec4 a_Position;
   uniform mat4 u_ModelMatrix;
+  uniform mat4 u_GlobalRotateMatrix;
   void main() {
-    gl_Position = u_ModelMatrix * a_Position;
+    gl_Position = u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
   }`
 
 // Fragment shader program
@@ -21,6 +22,8 @@ let gl;
 let a_Position;
 let u_FragColor;
 let u_Size;
+let u_ModelMatrix;
+let u_GlobalRotateMatrix;
 
 const POINT = 0;
 const TRIANGLE = 1;
@@ -31,6 +34,7 @@ let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
 let g_selectedSize = 20;
 let g_selectedType = POINT;
 let g_selectedSeg = 10; 
+let g_globalAngle = 0;
 
 // initializes array to store the shapes
 var g_shapesList = [];
@@ -79,6 +83,18 @@ function connectVariablesToGLSL(){
     console.log('Failed to get the storage location of u_ModelMatrix');
     return;
   }
+
+  //Get the storage location of u_GlobalRotateMatrix
+  u_GlobalRotateMatrix = gl.getUniformLocation(gl.program, 'u_GlobalRotateMatrix');
+  if (!u_GlobalRotateMatrix) {
+    console.log('Failed to get the storage location of u_GlobalRotateMatrix');
+    return;
+  }
+
+  //set up initival value for matrix to identify
+  var identityM = new Matrix4();
+  gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
+
 }// end function to connect variable to GLSL
 
 //Actions for HTML UI Elements
@@ -97,16 +113,15 @@ function actionsforHTML(){
   document.getElementById('point').onclick = function() {g_selectedType = POINT; };
   document.getElementById('triangle').onclick = function() {g_selectedType = TRIANGLE; };
   document.getElementById('circle').onclick = function() {g_selectedType = CIRCLE; };
+
   //Sliders - Colors
   document.getElementById('redSlide').addEventListener('mouseup', function(){g_selectedColor[0] = this.value/100;});
   document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
   document.getElementById('blueSlide').addEventListener('mouseup', function(){g_selectedColor[2] = this.value/100;});
-  document.getElementById('alphaSlide').addEventListener('mouseup', function(){g_selectedColor[3] = this.value/100;});
 
-  //Slider - Shape Size + # of Segments
-  document.getElementById('sizeSlide').addEventListener('mouseup', function(){g_selectedSize = this.value;});
-  document.getElementById('segSlide').addEventListener('mouseup', function(){g_selectedSeg = Number(this.value);});
-
+  //Slider - Angle
+  //document.getElementById('angleSlide').addEventListener('mouseup', function(){g_globalAngle = this.value; renderAllShapes(); });
+  document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderAllShapes(); });
 }
 
 //implements function for undo button
@@ -200,17 +215,16 @@ function convertCoordEventToGL(ev){
 
 //function to render all shapes
 function renderAllShapes(){
-    // Clear <canvas>
+
+  //pass the matrix to the u_ModelMatrix attribute
+  var globalRotMat=new Matrix4().rotate(g_globalAngle, 0, 1, 0);
+  gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
+
+  // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  // draw shapes in the list
-  //var len = g_shapesList.length;
-  //for(var i = 0; i < len; i++) {
-  //  g_shapesList[i].render();
-  //}
-
   //draw test triangle 
-  drawTriangle3D([ -1.0, 0.0, 0.0,  -0.5, -1.0, 0.0,  0.0, 0.0, 0.0]);
+  //drawTriangle3D([ -1.0, 0.0, 0.0,  -0.5, -1.0, 0.0,  0.0, 0.0, 0.0]);
 
   //draws the body (red)
   var body = new Cube();
@@ -222,8 +236,16 @@ function renderAllShapes(){
   //draws the arm (yellow)
   var leftArm = new Cube();
   leftArm.color = [1.0, 1.0, 0.0, 1.0];
-  leftArm.matrix.translate(0.7, 0, 0);
+  leftArm.matrix.setTranslate(0.7, 0, 0);
   leftArm.matrix.rotate(45, 0, 0, 1);
   leftArm.matrix.scale(0.25, 0.7, 0.5);
+  leftArm.render();
+
+  //draws test box (purple)
+  var leftArm = new Cube();
+  leftArm.color = [1.0, 0.0, 1.0, 1.0];
+  leftArm.matrix.translate(0, 0, -.5, 0);
+  leftArm.matrix.rotate(-30, 1, 0, 0);
+  leftArm.matrix.scale(0.5, 0.5, 0.5);
   leftArm.render();
 }

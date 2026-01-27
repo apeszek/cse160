@@ -15,12 +15,18 @@ class Cube {
 
     //Pass matrix to matrix attribute
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
-    
-    // Draw
-    drawTriangle3D([0.0, 0.0, 0.0,  1.0, 1.0, 0.0,  1.0, 0.0, 0.0]);
-    drawTriangle3D([0.0, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 1.0, 0.0]);
 
-    //other sides of cube (top, bottom, left, right, etc) - DO LATER
+    // Draw - front
+    drawTriangle3D([0, 0, 0,  1, 1, 0,  1, 0, 0]); 
+    drawTriangle3D([0, 0, 0,  0, 1, 0,  1, 1, 0]);
+
+    //pass the color of a point to u_FragColor uniform variable
+    gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
+
+    //Draw - top 
+    drawTriangle3D([0,1,0,   0, 1, 1,  1, 1, 1]);
+    drawTriangle3D([0,1,0,   1, 1, 1,  1, 1, 0]);
+    //other sides of cube (bottom, left, right, etc) - DO LATER
 
   }
 
