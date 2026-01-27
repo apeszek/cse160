@@ -46,7 +46,8 @@ function setUpWebGL(){
   canvas = document.getElementById('webgl');
 
   // Get the rendering context for WebGL
-  gl = canvas.getContext('webgl', { preserveDrawingBuffer: true});
+  gl = getWebGLContext(canvas);
+  //gl = canvas.getContext('webgl', { preserveDrawingBuffer: true});
   if (!gl) {
     console.log('Failed to get the rendering context for WebGL');
     return;
@@ -121,7 +122,7 @@ function actionsforHTML(){
 
   //Slider - Angle
   //document.getElementById('angleSlide').addEventListener('mouseup', function(){g_globalAngle = this.value; renderAllShapes(); });
-  document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderAllShapes(); });
+  document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
 }
 
 //implements function for undo button
@@ -173,7 +174,7 @@ function main() {
   // Clear <canvas>
   //gl.clear(gl.COLOR_BUFFER_BIT);
 
-  renderAllShapes();
+  renderScene();
 }
 
 // click function
@@ -199,7 +200,7 @@ function click(ev) {
 
   //calls function to renderAllShapes
   // draws every shape supposed to be in the screen
-  renderAllShapes();
+  renderScene();
 }
 
 function convertCoordEventToGL(ev){
@@ -214,8 +215,10 @@ function convertCoordEventToGL(ev){
 }
 
 //function to render all shapes
-function renderAllShapes(){
-
+function renderScene(){
+  //checks time at start of function
+  var startTime = performance.now();
+  
   //pass the matrix to the u_ModelMatrix attribute
   var globalRotMat=new Matrix4().rotate(g_globalAngle, 0, 1, 0);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
@@ -239,7 +242,7 @@ function renderAllShapes(){
   leftArm.matrix.setTranslate(0.7, 0, 0);
   leftArm.matrix.rotate(45, 0, 0, 1);
   leftArm.matrix.scale(0.25, 0.7, 0.5);
-  leftArm.render();
+  //leftArm.render();
 
   //draws test box (purple)
   var leftArm = new Cube();
@@ -248,4 +251,19 @@ function renderAllShapes(){
   leftArm.matrix.rotate(-30, 1, 0, 0);
   leftArm.matrix.scale(0.5, 0.5, 0.5);
   leftArm.render();
+
+  //checks the time at the end of the function (performance indicator)
+  var duration = performance.now() - startTime;
+  sendTextToHTML("fps: " + Math.floor(10000/duration)/10, "numdot");
+
+} // ends renderAllShapes functions
+
+//set the text of a HTML element function
+function sendTextToHTML(text, htmlID) {
+  var htmlElm = document.getElementById(htmlID);
+  if (!htmlElm){
+    console.log("Failed to get " + htmlID + " from HTML");
+    return;
+  }
+  htmlElm.innerHTML = text;
 }
