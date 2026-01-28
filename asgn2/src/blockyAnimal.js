@@ -226,32 +226,31 @@ function renderScene(){
 
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  //draw test triangle 
-  //drawTriangle3D([ -1.0, 0.0, 0.0,  -0.5, -1.0, 0.0,  0.0, 0.0, 0.0]);
 
-  //draws the body (red)
-  var body = new Cube();
-  body.color = [1.0, 0.0, 0.0, 1.0];
-  body.matrix.translate(-0.25, -0.5, 0.0);
-  body.matrix.scale(0.5, 1, 0.5);
-  //body.render();
+  //draws the body - cylinder
+  var body = new cylinder();
+  body.color = [0.92, 0.73, 0.549, 1.0];
+  body.a = 0.4;       // x-radius
+  body.b = 0.3;      // z-radius
+  body.height = 1.3;
+  body.segments = 25;
+  // transforms body
+  body.matrix.scale(0.55, 1.0, 0.55);
+  body.matrix.translate(-0.2, -0.2, 0.0);
+  body.matrix.rotate(90, 1, 0, 0);
+  body.render();
 
-  //draws the arm (yellow)
+  //draws head - cube
   var leftArm = new Cube();
-  leftArm.color = [1.0, 1.0, 0.0, 1.0];
-  leftArm.matrix.setTranslate(0.7, 0, 0);
-  leftArm.matrix.rotate(45, 0, 0, 1);
-  leftArm.matrix.scale(0.25, 0.7, 0.5);
+  leftArm.color = [0.92, 0.73, 0.549, 1.0];
+  leftArm.matrix.scale(0.2, 0.35, 0.25);
+  leftArm.matrix.translate(-1.1, 0, -.5, 0);
+  leftArm.matrix.rotate(0, 1, 0, 0);
   leftArm.render();
 
-  //draws test box (purple)
-  var leftArm = new Cube();
-  leftArm.color = [1.0, 0.0, 1.0, 1.0];
-  leftArm.matrix.translate(0, 0, -.5, 0);
-  leftArm.matrix.rotate(-30, 1, 0, 0);
-  leftArm.matrix.scale(0.5, 0.5, 0.5);
-  leftArm.render();
+  //draws face - triangle
+  //gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
+  //drawTriangle3D([0, 0, 0,  1, 1, 0,  1, 0, 0]); 
 
   //checks the time at the end of the function (performance indicator)
   var duration = performance.now() - startTime;
