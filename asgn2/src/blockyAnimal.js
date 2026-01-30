@@ -232,25 +232,50 @@ function renderScene(){
   body.color = [0.92, 0.73, 0.549, 1.0];
   body.a = 0.4;       // x-radius
   body.b = 0.3;      // z-radius
-  body.height = 1.3;
+  body.height = 1.1;
   body.segments = 25;
   // transforms body
-  body.matrix.scale(0.55, 1.0, 0.55);
+  body.matrix.scale(0.8, 1.0, 0.8);
   body.matrix.translate(-0.2, -0.2, 0.0);
   body.matrix.rotate(90, 1, 0, 0);
   body.render();
 
   //draws head - cube
-  var leftArm = new Cube();
-  leftArm.color = [0.92, 0.73, 0.549, 1.0];
-  leftArm.matrix.scale(0.2, 0.35, 0.25);
-  leftArm.matrix.translate(-1.1, 0, -.5, 0);
-  leftArm.matrix.rotate(0, 1, 0, 0);
-  leftArm.render();
+  var head = new Cube();
+  head.color = [0.92, 0.73, 0.549, 1.0];
+  head.matrix.scale(0.3, 0.35, 0.3);
+  head.matrix.translate(-1.1, 0, -.5);
+  head.matrix.rotate(0, 1, 0, 0);
+  head.render();
 
-  //draws face - triangle
-  //gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
-  //drawTriangle3D([0, 0, 0,  1, 1, 0,  1, 0, 0]); 
+  //draws legs (upper) - cube
+  var legUpper1 = new Cube();
+  legUpper1.color = [0.92, 0.73, 0.549, 1.0];
+  legUpper1.matrix.scale(0.1, 0.35, 0.1);
+  legUpper1.matrix.translate(0.1, -2, 1.2);
+  legUpper1.matrix.rotate(0, 1, 0, 0);
+  legUpper1.render();
+
+  var legUpper2 = new Cube();
+  legUpper2.color = [0.92, 0.73, 0.549, 1.0];
+  legUpper2.matrix.scale(0.1, 0.35, 0.1);
+  legUpper2.matrix.translate(-4.2, -2, 1.2);
+  legUpper2.matrix.rotate(0, 1, 0, 0);
+  legUpper2.render();
+
+  var legUpper3 = new Cube();
+  legUpper3.color = [0.92, 0.73, 0.549, 1.0];
+  legUpper3.matrix.scale(0.1, 0.35, 0.1);
+  legUpper3.matrix.translate(-4.2, -2, 7.0);
+  legUpper3.matrix.rotate(0, 1, 0, 0);
+  legUpper3.render();
+
+  var legUpper4 = new Cube();
+  legUpper4.color = [0.92, 0.73, 0.549, 1.0];
+  legUpper4.matrix.scale(0.1, 0.35, 0.1);
+  legUpper4.matrix.translate(0.1, -2, 7.0);
+  legUpper4.matrix.rotate(0, 1, 0, 0);
+  legUpper4.render();
 
   //checks the time at the end of the function (performance indicator)
   var duration = performance.now() - startTime;
