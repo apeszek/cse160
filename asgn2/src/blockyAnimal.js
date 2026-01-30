@@ -101,26 +101,6 @@ function connectVariablesToGLSL(){
 
 //Actions for HTML UI Elements
 function actionsforHTML(){
-  //Buttons - Colors
-  document.getElementById('green').onclick = function() {g_selectedColor = [0.0, 1.0, 0.0, 1.0]; };
-  document.getElementById('red').onclick = function() {g_selectedColor = [1.0, 0.0, 0.0, 1.0]; };
- 
-  //Buttons - Clear, Redo, Undo
-  document.getElementById('clear').onclick = function() {g_shapesList = []; g_stack = []; renderAllShapes();};
-  document.getElementById('undo').onclick = undo;
-  document.getElementById('redo').onclick = redo;
-
-
-  //Buttons - Shape 
-  document.getElementById('point').onclick = function() {g_selectedType = POINT; };
-  document.getElementById('triangle').onclick = function() {g_selectedType = TRIANGLE; };
-  document.getElementById('circle').onclick = function() {g_selectedType = CIRCLE; };
-
-  //Sliders - Colors
-  document.getElementById('redSlide').addEventListener('mouseup', function(){g_selectedColor[0] = this.value/100;});
-  document.getElementById('greenSlide').addEventListener('mouseup', function(){g_selectedColor[1] = this.value/100;});
-  document.getElementById('blueSlide').addEventListener('mouseup', function(){g_selectedColor[2] = this.value/100;});
-
   //Slider - Angle
   //document.getElementById('angleSlide').addEventListener('mouseup', function(){g_globalAngle = this.value; renderAllShapes(); });
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
