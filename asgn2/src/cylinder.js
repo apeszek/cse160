@@ -43,7 +43,7 @@ class cylinder {
       drawTriangle3D([ 0,this.height,0,   x2,this.height,z2,   x1,this.height,z1 ]);
 
       // --- BOTTOM CAP (triangle fan, flipped winding) ---
-      gl.uniform4f(u_FragColor, rgba[0]*0.85, rgba[1]*0.85, rgba[2]*0.85, rgba[3]);
+      gl.uniform4f(u_FragColor, rgba[0]*0.98, rgba[1]*0.98, rgba[2]*0.98, rgba[3]);
       drawTriangle3D([ 0,0,0,   x1,0,z1,   x2,0,z2 ]);
     }
   }

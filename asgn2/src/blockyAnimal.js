@@ -36,6 +36,7 @@ let g_selectedType = POINT;
 let g_selectedSeg = 10; 
 let g_globalAngle = 0;
 
+
 // initializes array to store the shapes
 var g_shapesList = [];
 var g_stack = [];
@@ -145,15 +146,8 @@ function main() {
 
   canvas.onmousemove = function(ev) { if (ev.buttons == 1) {click(ev) }};
 
-  //Transparency values
-  //gl.enable(gl.BLEND);
-  //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
-  // Clear <canvas>
-  //gl.clear(gl.COLOR_BUFFER_BIT);
 
   renderScene();
 }
@@ -228,6 +222,32 @@ function renderScene(){
   head.matrix.rotate(0, 1, 0, 0);
   head.render();
 
+  //draws horns 
+  //left 
+  var diamond = new Cube();
+  diamond.color = [0.6, 0.4, 0.2, 1.0];
+  diamond.matrix.scale(0.1, 0.2, 0.1);
+  diamond.matrix.rotate(-45, 1, 0, 0);
+  diamond.matrix.rotate(0, 0, 1, 0);
+  diamond.matrix.translate(-4.5, 0.55, 0.4);
+  //diamond.render();
+
+  var leftHornBase = new Cube();
+  leftHornBase.color = [0.6, 0.4, 0.2, 1.0];
+  leftHornBase.matrix.set(head.matrix);
+  leftHornBase.matrix.rotate(90, 0, 0, 1);
+  leftHornBase.matrix.scale(0.2, 0.8, 0.2);
+  leftHornBase.matrix.translate(3.9, 0, 0.2);
+  leftHornBase.render();
+
+  var rightHornBase = new Cube();
+  rightHornBase.color = [0.6, 0.4, 0.2, 1.0];
+  rightHornBase.matrix.set(head.matrix);
+  rightHornBase.matrix.rotate(90, 0, 0, 1);
+  rightHornBase.matrix.scale(0.2, 0.8, 0.2);
+  rightHornBase.matrix.translate(3.9, -2.2, 0.2);
+  rightHornBase.render();
+
   //draws legs (upper) - cube
   var legUpper1 = new Cube();
   legUpper1.color = [0.92, 0.73, 0.549, 1.0];
@@ -256,6 +276,28 @@ function renderScene(){
   legUpper4.matrix.translate(0.1, -2, 7.0);
   legUpper4.matrix.rotate(0, 1, 0, 0);
   legUpper4.render();
+
+  //draws tail - cube
+  var upperTail = new Cube();
+  upperTail.color = [0.6, 0.4, 0.2, 1.0];
+  upperTail.matrix.rotate(45, -45, 0, 0);
+  upperTail.matrix.scale(0.05, 0.5, 0.05);
+  upperTail.matrix.translate(-3.2, -2, 9);
+  upperTail.render();
+
+  //COME BACK TO THIS
+  //gl.disable(gl.DEPTH_TEST); // so it always appears on top
+// (optional) stop global rotation from affecting overlay
+  let id = new Matrix4();
+  gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, id.elements);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, id.elements);
+  //lighter color on stomach 
+  var belly = new Circle
+  belly.color = [0.9, 0.9, 0.9, 1.0];
+  belly.position = [0.05, -0.15];
+  belly.size = 30;
+  belly.segments = 30;
+  //belly.render();
 
   //checks the time at the end of the function (performance indicator)
   var duration = performance.now() - startTime;
