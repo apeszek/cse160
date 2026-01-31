@@ -224,13 +224,15 @@ function renderScene(){
 
   //draws horns 
   //left 
-  var diamond = new Cube();
-  diamond.color = [0.6, 0.4, 0.2, 1.0];
-  diamond.matrix.scale(0.1, 0.2, 0.1);
-  diamond.matrix.rotate(-45, 1, 0, 0);
-  diamond.matrix.rotate(0, 0, 1, 0);
-  diamond.matrix.translate(-4.5, 0.55, 0.4);
-  //diamond.render();
+  var leftHornTop = new Cube();
+  leftHornTop.color = [0.6, 0.4, 0.2, 1.0];
+  leftHornTop.matrix.rotate(45, 0, 1, 0);
+  leftHornTop.matrix.rotate(5, 0, 0, 1);
+  leftHornTop.matrix.rotate(-30, 1, 0, 0);
+  leftHornTop.matrix.scale(0.05, 0.3, 0.05);
+  leftHornTop.matrix.rotate(-45, 1, 0, 0);
+  leftHornTop.matrix.translate(-6, 4.9, -2.5);
+  leftHornTop.render();
 
   var leftHornBase = new Cube();
   leftHornBase.color = [0.6, 0.4, 0.2, 1.0];
@@ -240,6 +242,7 @@ function renderScene(){
   leftHornBase.matrix.translate(3.9, 0, 0.2);
   leftHornBase.render();
 
+  //right side
   var rightHornBase = new Cube();
   rightHornBase.color = [0.6, 0.4, 0.2, 1.0];
   rightHornBase.matrix.set(head.matrix);
@@ -247,6 +250,16 @@ function renderScene(){
   rightHornBase.matrix.scale(0.2, 0.8, 0.2);
   rightHornBase.matrix.translate(3.9, -2.2, 0.2);
   rightHornBase.render();
+
+  var rightHornTop = new Cube(); 
+  rightHornTop.color = [0.6, 0.4, 0.2, 1.0];
+  rightHornTop.matrix.rotate(-45, 0, 1, 0);
+  rightHornTop.matrix.rotate(-5, 0, 0, 1);
+  rightHornTop.matrix.rotate(-30, 1, 0, 0);
+  rightHornTop.matrix.scale(0.05, 0.3, 0.05);
+  rightHornTop.matrix.rotate(-45, 1, 0, 0);
+  rightHornTop.matrix.translate(-0.4, 1.44, 0.2);
+  rightHornTop.render();
 
   //draws legs (upper) - cube
   var legUpper1 = new Cube();
