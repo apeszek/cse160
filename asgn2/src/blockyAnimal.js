@@ -35,6 +35,7 @@ let g_selectedSize = 20;
 let g_selectedType = POINT;
 let g_selectedSeg = 10; 
 let g_globalAngle = 0;
+let g_legMove = 0;
 
 
 // initializes array to store the shapes
@@ -102,6 +103,9 @@ function connectVariablesToGLSL(){
 
 //Actions for HTML UI Elements
 function actionsforHTML(){
+  //Slider - Leg Movement
+  document.getElementById('legMove').addEventListener('mousemove',function() {g_legMove = this.value; renderScene();});
+
   //Slider - Angle
   //document.getElementById('angleSlide').addEventListener('mouseup', function(){g_globalAngle = this.value; renderAllShapes(); });
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
@@ -209,14 +213,14 @@ function renderScene(){
   body.height = 1.1;
   body.segments = 25;
   // transforms body
-  body.matrix.scale(0.8, 1.0, 0.8);
+  body.matrix.scale(0.9, 1.0, 0.9);
   body.matrix.translate(-0.2, -0.2, 0.0);
   body.matrix.rotate(90, 1, 0, 0);
   body.render();
 
   //draws head - cube
   var head = new Cube();
-  head.color = [0.92, 0.73, 0.549, 1.0];
+  head.color = [0.85, 0.66, 0.47, 1.0];
   head.matrix.scale(0.3, 0.35, 0.3);
   head.matrix.translate(-1.1, 0, -.5);
   head.matrix.rotate(0, 1, 0, 0);
@@ -263,51 +267,128 @@ function renderScene(){
 
   //draws legs (upper) - cube
   var legUpper1 = new Cube();
-  legUpper1.color = [0.92, 0.73, 0.549, 1.0];
-  legUpper1.matrix.scale(0.1, 0.35, 0.1);
-  legUpper1.matrix.translate(0.1, -2, 1.2);
+  legUpper1.color = [0.85, 0.66, 0.47, 1.0];
+  legUpper1.matrix.scale(0.17, 0.32, 0.17);
+  legUpper1.matrix.translate(-0.15, -2, 0.5);
   legUpper1.matrix.rotate(0, 1, 0, 0);
   legUpper1.render();
 
   var legUpper2 = new Cube();
-  legUpper2.color = [0.92, 0.73, 0.549, 1.0];
-  legUpper2.matrix.scale(0.1, 0.35, 0.1);
-  legUpper2.matrix.translate(-4.2, -2, 1.2);
+  legUpper2.color = [0.85, 0.66, 0.47, 1.0];
+  legUpper2.matrix.scale(0.17, 0.32, 0.17);
+  legUpper2.matrix.translate(-2.7, -2, 0.5);
   legUpper2.matrix.rotate(0, 1, 0, 0);
   legUpper2.render();
 
   var legUpper3 = new Cube();
-  legUpper3.color = [0.92, 0.73, 0.549, 1.0];
-  legUpper3.matrix.scale(0.1, 0.35, 0.1);
-  legUpper3.matrix.translate(-4.2, -2, 7.0);
+  legUpper3.color = [0.85, 0.66, 0.47, 1.0];
+  legUpper3.matrix.scale(0.17, 0.32, 0.17);
+  legUpper3.matrix.translate(-2.7, -2, 4.0);
   legUpper3.matrix.rotate(0, 1, 0, 0);
   legUpper3.render();
 
   var legUpper4 = new Cube();
-  legUpper4.color = [0.92, 0.73, 0.549, 1.0];
-  legUpper4.matrix.scale(0.1, 0.35, 0.1);
-  legUpper4.matrix.translate(0.1, -2, 7.0);
+  legUpper4.color = [0.85, 0.66, 0.47, 1.0];
+  legUpper4.matrix.scale(0.17, 0.32, 0.17);
+  legUpper4.matrix.translate(-0.15, -2, 4.0);
   legUpper4.matrix.rotate(0, 1, 0, 0);
   legUpper4.render();
 
+  //lower sections of legs (below joint)
+  var legLower1 = new Cube();
+  legLower1.color = [0.95, 0.75, 0.57, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  legLower1.matrix.scale(0.1, 0.2, 0.1);
+  legLower1.matrix.translate(0.1, -4, 1.2);
+  legLower1.matrix.rotate(0, 1, 0, 0);
+  legLower1.render();
+
+  var legLower2 = new Cube();
+  legLower2.color = [0.95, 0.75, 0.57, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  legLower2.matrix.scale(0.1, 0.2, 0.1);
+  legLower2.matrix.translate(-4.2, -4, 1.2);
+  legLower2.matrix.rotate(0, 1, 0, 0);
+  legLower2.render();
+
+  var legLower3 = new Cube();
+  legLower3.color = [0.95, 0.75, 0.57, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  legLower3.matrix.scale(0.1, 0.2, 0.1);
+  legLower3.matrix.translate(0.1, -4, 7.0);
+  legLower3.matrix.rotate(0, 1, 0, 0);
+  legLower3.render();
+
+  var legLower4 = new Cube();
+  legLower4.color = [0.95, 0.75, 0.57, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  legLower4.matrix.scale(0.1, 0.2, 0.1);
+  legLower4.matrix.translate(-4.2, -4, 7.0);
+  legLower4.matrix.rotate(0, 1, 0, 0);
+  legLower4.render();
+
+  //hoofs (second joint)
+  var hoof1 = new Cube();
+  hoof1.color = [0.95, 0.95, 0.95, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  hoof1.matrix.scale(0.1, 0.1, 0.1);
+  hoof1.matrix.translate(0.1, -9, 1.2);
+  hoof1.matrix.rotate(0, 1, 0, 0);
+  hoof1.render();
+
+  var hoof2 = new Cube();
+  hoof2.color = [0.95, 0.95, 0.95, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  hoof2.matrix.scale(0.1, 0.1, 0.1);
+  hoof2.matrix.translate(-4.2, -9, 1.2);
+  hoof2.matrix.rotate(0, 1, 0, 0);
+  hoof2.render();
+
+  var hoof3 = new Cube();
+  hoof3.color = [0.95, 0.95, 0.95, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  hoof3.matrix.scale(0.1, 0.1, 0.1);
+  hoof3.matrix.translate(0.1, -9, 7.0);
+  hoof3.matrix.rotate(0, 1, 0, 0);
+  hoof3.render();
+
+  var hoof4 = new Cube();
+  hoof4.color = [0.95, 0.95, 0.95, 1.0];
+  //legLower1.matrix.rotate(-45, 1, 0, 0);
+  hoof4.matrix.scale(0.1, 0.1, 0.1);
+  hoof4.matrix.translate(-4.2, -9, 7.0);
+  hoof4.matrix.rotate(0, 1, 0, 0);
+  hoof4.render();
+
+
+
+  //TAIL
   //draws tail - cube
   var upperTail = new Cube();
   upperTail.color = [0.6, 0.4, 0.2, 1.0];
   upperTail.matrix.rotate(45, -45, 0, 0);
   upperTail.matrix.scale(0.05, 0.5, 0.05);
-  upperTail.matrix.translate(-3.2, -2, 9);
-  upperTail.render();
+  upperTail.matrix.translate(-3.2, -3, 11);
+  //upperTail.render();
+
+  var baseTail = new Cube();
+  baseTail.color = [0.6, 0.4, 0.2, 1.0];
+  baseTail.matrix.rotate(90, 0, 0, 1);
+  baseTail.matrix.scale(0.05, 0.5, 0.05);
+  baseTail.matrix.translate(2, 1, 1);
+  baseTail.render();
+
 
   //COME BACK TO THIS
   //gl.disable(gl.DEPTH_TEST); // so it always appears on top
 // (optional) stop global rotation from affecting overlay
-  let id = new Matrix4();
-  gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, id.elements);
-  gl.uniformMatrix4fv(u_ModelMatrix, false, id.elements);
+  //let id = new Matrix4();
+  //gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, id.elements);
+  //gl.uniformMatrix4fv(u_ModelMatrix, false, id.elements);
   //lighter color on stomach 
   var belly = new Circle
   belly.color = [0.9, 0.9, 0.9, 1.0];
-  belly.position = [0.05, -0.15];
+  belly.position = [-0.05, -0.2];
   belly.size = 30;
   belly.segments = 30;
   //belly.render();
