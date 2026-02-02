@@ -36,7 +36,12 @@ let g_selectedType = POINT;
 let g_selectedSeg = 10; 
 let g_globalAngle = 0;
 let g_legMove = 0;
+let g_baseTailMove = 0;
+let g_upperTailMove = 0;
+let g_furTail = 0;
 
+var g_startTime = performance.now()/1000.0;
+var g_seconds = performance.now()/1000.0-g_startTime;
 
 // initializes array to store the shapes
 var g_shapesList = [];
@@ -103,8 +108,12 @@ function connectVariablesToGLSL(){
 
 //Actions for HTML UI Elements
 function actionsforHTML(){
-  //Slider - Leg Movement
+  //Slider - Tail Movement + leg movement
   document.getElementById('legMove').addEventListener('mousemove',function() {g_legMove = this.value; renderScene();});
+  document.getElementById('baseTailMove').addEventListener('mousemove',function() {g_baseTailMove = this.value; renderScene();});
+  document.getElementById('upperTailMove').addEventListener('mousemove',function() {g_upperTailMove = this.value; renderScene();});
+  document.getElementById('furTail').addEventListener('mousemove',function() {g_furTail = this.value; renderScene();});
+
 
   //Slider - Angle
   //document.getElementById('angleSlide').addEventListener('mouseup', function(){g_globalAngle = this.value; renderAllShapes(); });
@@ -154,6 +163,18 @@ function main() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
   renderScene();
+
+  //requestAnimationFrame(tick);
+}
+
+//tick function
+function tick(){
+  g_seconds = performance.now()/1000.0;
+  console.log(g_seconds);
+
+  renderScene();
+
+  requestAnimationFrame(tick);
 }
 
 // click function
@@ -377,26 +398,36 @@ function renderScene(){
 
   //TAIL
   //draws tail - cube
-  var upperTail = new Cube();
-  upperTail.color = [0.6, 0.4, 0.2, 1.0];
-  upperTail.matrix.rotate(45, -45, 0, 0);
-  upperTail.matrix.scale(0.05, 0.5, 0.05);
-  upperTail.matrix.translate(-3.2, -3, 11);
-  //upperTail.render();
-
   var baseTail = new Cube();
   baseTail.color = [0.6, 0.4, 0.2, 1.0];
-  baseTail.matrix.translate(-0.15, 0.1, 0.9);
+  baseTail.matrix.translate(-0.15, 0.1, 0.85);
   baseTail.matrix.rotate(90, 0, 0, 1);
+  baseTail.matrix.rotate(g_baseTailMove, 1, 0, 0);
   baseTail.matrix.scale(0.07, 0.07, 0.2);
-  //baseTail.render();
+  var baseTailCoords = new Matrix4(baseTail.matrix);
+  baseTail.render();
 
-  var midTail = new Cube();
-  midTail.color = [0.6, 0.4, 0.2, 1.0];
-  midTail.matrix.translate(-0.19, -0.14, 0.9);
-  midTail.matrix.scale(0.07, 0.3, 0.07);
-  midTail.matrix.rotate(-30, 1, 0, 0);
-  midTail.render();
+
+  var upperTail = new Cube();
+  upperTail.color = [0.6, 0.4, 0.2, 1.0];
+  upperTail.matrix = baseTailCoords;
+  upperTail.matrix.translate(0, 0, 1);
+  upperTail.matrix.rotate(-35, 0, 0, 1);
+  upperTail.matrix.rotate(100, 1, 0, 0);
+  upperTail.matrix.scale(1, 0.5, 4);
+  upperTail.matrix.rotate(g_upperTailMove, 0, 1, 0);
+  var upperTailCoords = new Matrix4(upperTail.matrix);
+  upperTail.render();
+
+  //bottom of tail
+  var furBall = new Cube();
+  furBall.color = [0.75, 0.75, 0.75, 1];
+  furBall.matrix = upperTailCoords;
+  furBall.matrix.rotate(0, 0, 1, 0);
+  furBall.matrix.scale(1, 1, 0.4);
+  furBall.matrix.translate(0, 0, 2);
+  furBall.matrix.rotate(g_furTail, 0, 1, 0);
+  furBall.render();
 
 
   //checks the time at the end of the function (performance indicator)
