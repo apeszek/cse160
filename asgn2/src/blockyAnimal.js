@@ -203,6 +203,7 @@ function renderScene(){
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
   // Clear <canvas>
+  gl.enable(gl.DEPTH_TEST);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   //draws the body - cylinder
@@ -213,7 +214,7 @@ function renderScene(){
   body.height = 1.1;
   body.segments = 25;
   // transforms body
-  body.matrix.scale(0.9, 1.0, 0.9);
+  body.matrix.scale(0.85, 1.0, 0.85);
   body.matrix.translate(-0.2, -0.2, 0.0);
   body.matrix.rotate(90, 1, 0, 0);
   body.render();
@@ -297,67 +298,79 @@ function renderScene(){
   //lower sections of legs (below joint)
   var legLower1 = new Cube();
   legLower1.color = [0.95, 0.75, 0.57, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   legLower1.matrix.scale(0.1, 0.2, 0.1);
   legLower1.matrix.translate(0.1, -4, 1.2);
   legLower1.matrix.rotate(0, 1, 0, 0);
+  legLower1.matrix.rotate(g_legMove, 1, 0, 0);
+  var legLower1Coords = new Matrix4(legLower1.matrix);
   legLower1.render();
 
   var legLower2 = new Cube();
   legLower2.color = [0.95, 0.75, 0.57, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   legLower2.matrix.scale(0.1, 0.2, 0.1);
   legLower2.matrix.translate(-4.2, -4, 1.2);
   legLower2.matrix.rotate(0, 1, 0, 0);
+  legLower2.matrix.rotate(g_legMove, 1, 0, 0);
+  var legLower2Coords = new Matrix4(legLower2.matrix);
   legLower2.render();
 
   var legLower3 = new Cube();
   legLower3.color = [0.95, 0.75, 0.57, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   legLower3.matrix.scale(0.1, 0.2, 0.1);
   legLower3.matrix.translate(0.1, -4, 7.0);
-  legLower3.matrix.rotate(0, 1, 0, 0);
+  legLower3.matrix.rotate(0, 1, 0, 0);  
+  legLower3.matrix.rotate(-g_legMove, 1, 0, 0);
+  var legLower3Coords = new Matrix4(legLower3.matrix);
   legLower3.render();
 
   var legLower4 = new Cube();
   legLower4.color = [0.95, 0.75, 0.57, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   legLower4.matrix.scale(0.1, 0.2, 0.1);
   legLower4.matrix.translate(-4.2, -4, 7.0);
   legLower4.matrix.rotate(0, 1, 0, 0);
+  legLower4.matrix.rotate(-g_legMove, 1, 0, 0);
+  var legLower4Coords = new Matrix4(legLower4.matrix);
   legLower4.render();
 
   //hoofs (second joint)
   var hoof1 = new Cube();
   hoof1.color = [0.95, 0.95, 0.95, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   hoof1.matrix.scale(0.1, 0.1, 0.1);
   hoof1.matrix.translate(0.1, -9, 1.2);
   hoof1.matrix.rotate(0, 1, 0, 0);
+  hoof1.matrix = legLower1Coords;
+  hoof1.matrix.translate(0, -0.5, 0); 
+  hoof1.matrix.scale(1, 0.5, 1);
   hoof1.render();
 
   var hoof2 = new Cube();
   hoof2.color = [0.95, 0.95, 0.95, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   hoof2.matrix.scale(0.1, 0.1, 0.1);
   hoof2.matrix.translate(-4.2, -9, 1.2);
   hoof2.matrix.rotate(0, 1, 0, 0);
+  hoof2.matrix = legLower2Coords;
+  hoof2.matrix.translate(0, -0.5, 0); 
+  hoof2.matrix.scale(1, 0.5, 1);
   hoof2.render();
 
   var hoof3 = new Cube();
   hoof3.color = [0.95, 0.95, 0.95, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   hoof3.matrix.scale(0.1, 0.1, 0.1);
   hoof3.matrix.translate(0.1, -9, 7.0);
   hoof3.matrix.rotate(0, 1, 0, 0);
+  hoof3.matrix = legLower3Coords;
+  hoof3.matrix.translate(0, -0.5, 0); 
+  hoof3.matrix.scale(1, 0.5, 1);
   hoof3.render();
 
   var hoof4 = new Cube();
   hoof4.color = [0.95, 0.95, 0.95, 1.0];
-  //legLower1.matrix.rotate(-45, 1, 0, 0);
   hoof4.matrix.scale(0.1, 0.1, 0.1);
   hoof4.matrix.translate(-4.2, -9, 7.0);
   hoof4.matrix.rotate(0, 1, 0, 0);
+  hoof4.matrix = legLower4Coords;
+  hoof4.matrix.translate(0, -0.5, 0); 
+  hoof4.matrix.scale(1, 0.5, 1);
   hoof4.render();
 
 
@@ -373,25 +386,18 @@ function renderScene(){
 
   var baseTail = new Cube();
   baseTail.color = [0.6, 0.4, 0.2, 1.0];
+  baseTail.matrix.translate(-0.15, 0.1, 0.9);
   baseTail.matrix.rotate(90, 0, 0, 1);
-  baseTail.matrix.scale(0.05, 0.5, 0.05);
-  baseTail.matrix.translate(2, 1, 1);
-  baseTail.render();
+  baseTail.matrix.scale(0.07, 0.07, 0.2);
+  //baseTail.render();
 
+  var midTail = new Cube();
+  midTail.color = [0.6, 0.4, 0.2, 1.0];
+  midTail.matrix.translate(-0.19, -0.14, 0.9);
+  midTail.matrix.scale(0.07, 0.3, 0.07);
+  midTail.matrix.rotate(-30, 1, 0, 0);
+  midTail.render();
 
-  //COME BACK TO THIS
-  //gl.disable(gl.DEPTH_TEST); // so it always appears on top
-// (optional) stop global rotation from affecting overlay
-  //let id = new Matrix4();
-  //gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, id.elements);
-  //gl.uniformMatrix4fv(u_ModelMatrix, false, id.elements);
-  //lighter color on stomach 
-  var belly = new Circle
-  belly.color = [0.9, 0.9, 0.9, 1.0];
-  belly.position = [-0.05, -0.2];
-  belly.size = 30;
-  belly.segments = 30;
-  //belly.render();
 
   //checks the time at the end of the function (performance indicator)
   var duration = performance.now() - startTime;
