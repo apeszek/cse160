@@ -39,7 +39,7 @@ let g_legMove = 0;
 let g_baseTailMove = 0;
 let g_upperTailMove = 0;
 let g_furTail = 0;
-let g_animation = true;
+let g_animation = false;
 
 var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
@@ -167,9 +167,9 @@ function main() {
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-  //renderScene();
+  renderScene();
+
   tick();
-  requestAnimationFrame(tick);
 }
 
 //tick function
@@ -177,9 +177,17 @@ function tick(){
   g_seconds = performance.now()/1000.0;
   console.log(g_seconds);
 
+  updateAnimationAngles();
+
   renderScene();
 
   requestAnimationFrame(tick);
+}
+
+function updateAnimationAngles() {
+  if (g_animation) {
+    g_legMove = (30*Math.sin(g_seconds));
+  }
 }
 
 // click function
@@ -327,13 +335,7 @@ function renderScene(){
   legLower1.matrix.scale(0.1, 0.2, 0.1);
   legLower1.matrix.translate(0.1, -4, 1.2);
   legLower1.matrix.rotate(0, 1, 0, 0);
-
-  if (g_animation){
-    legLower1.matrix.rotate(30 *Math.sin(g_seconds), 1, 0, 0);
-  } else {
-    legLower1.matrix.rotate(g_legMove, 1, 0, 0);
-  }
-
+  legLower1.matrix.rotate(g_legMove, 1, 0, 0);
   var legLower1Coords = new Matrix4(legLower1.matrix);
   legLower1.render();
 
@@ -343,13 +345,6 @@ function renderScene(){
   legLower2.matrix.translate(-4.2, -4, 1.2);
   legLower2.matrix.rotate(0, 1, 0, 0);
   legLower2.matrix.rotate(g_legMove, 1, 0, 0);
-  
-  if (g_animation){
-    legLower2.matrix.rotate(30 *Math.sin(g_seconds), 1, 0, 0);
-  } else {
-    legLower2.matrix.rotate(g_legMove, 1, 0, 0);
-  }
-
   var legLower2Coords = new Matrix4(legLower2.matrix);
   legLower2.render();
 
@@ -358,12 +353,7 @@ function renderScene(){
   legLower3.matrix.scale(0.1, 0.2, 0.1);
   legLower3.matrix.translate(0.1, -4, 7.0);
   legLower3.matrix.rotate(0, 1, 0, 0);  
-  
-  if (g_animation){
-    legLower3.matrix.rotate(-30 *Math.sin(g_seconds), 1, 0, 0);
-  } else {
-    legLower3.matrix.rotate(-g_legMove, 1, 0, 0);
-  }
+  legLower3.matrix.rotate(-g_legMove, 1, 0, 0);
   var legLower3Coords = new Matrix4(legLower3.matrix);
   legLower3.render();
 
@@ -372,12 +362,7 @@ function renderScene(){
   legLower4.matrix.scale(0.1, 0.2, 0.1);
   legLower4.matrix.translate(-4.2, -4, 7.0);
   legLower4.matrix.rotate(0, 1, 0, 0);
-  
-  if (g_animation){
-    legLower4.matrix.rotate(-30 *Math.sin(g_seconds), 1, 0, 0);
-  } else {
-    legLower4.matrix.rotate(-g_legMove, 1, 0, 0);
-  }
+  legLower4.matrix.rotate(-g_legMove, 1, 0, 0);
   var legLower4Coords = new Matrix4(legLower4.matrix);
   legLower4.render();
 
