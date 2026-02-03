@@ -125,7 +125,6 @@ function actionsforHTML(){
   document.getElementById('upperTailMove').addEventListener('mousemove',function() {g_upperTailMove = this.value; renderScene();});
   document.getElementById('furTail').addEventListener('mousemove',function() {g_furTail = this.value; renderScene();});
 
-
   //Slider - Angle
   //document.getElementById('angleSlide').addEventListener('mouseup', function(){g_globalAngle = this.value; renderAllShapes(); });
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
@@ -179,8 +178,6 @@ function main() {
       g_globalAngle -= 20;
     }
   };
-
-
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -250,7 +247,6 @@ function renderScene(){
   //pass the matrix to the u_ModelMatrix attribute
   var globalRotMat=new Matrix4().rotate(g_globalAngle, 0, 1, 0);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
-
 
   // Clear <canvas>
   gl.enable(gl.DEPTH_TEST);
@@ -423,7 +419,6 @@ function renderScene(){
   hoof4.matrix.scale(1, 0.5, 1);
   hoof4.render();
 
-
   //TAIL
   //draws tail - cube
   var baseTail = new Cube();
@@ -434,7 +429,6 @@ function renderScene(){
   baseTail.matrix.scale(0.07, 0.07, 0.2);
   var baseTailCoords = new Matrix4(baseTail.matrix);
   baseTail.render();
-
 
   var upperTail = new Cube();
   upperTail.color = [0.6, 0.4, 0.2, 1.0];
@@ -456,7 +450,6 @@ function renderScene(){
   furBall.matrix.translate(0, 0, 2);
   furBall.matrix.rotate(g_furTail, 0, 1, 0);
   furBall.render();
-
 
   //checks the time at the end of the function (performance indicator)
   var duration = performance.now() - startTime;
