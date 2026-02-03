@@ -34,12 +34,18 @@ let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
 let g_selectedSize = 20;
 let g_selectedType = POINT;
 let g_selectedSeg = 10; 
+
 let g_globalAngle = 0;
+let g_globalAngleX = 0;
+let g_globalAngleY = 0;
+
+//GLOBALS (animation and slider movement)
 let g_legMove = 0;
 let g_baseTailMove = 0;
 let g_upperTailMove = 0;
 let g_furTail = 0;
 let g_animation = false;
+let g_mouseIn = false;
 
 var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
@@ -162,12 +168,21 @@ function main() {
   // calls click function,
   canvas.onmousedown = click;
 
-  canvas.onmousemove = function(ev) { if (ev.buttons == 1) {click(ev) }};
+  canvas.onclick = function(ev){
+    const rect = canvas.getBoundingClientRect();
+    const x = ev.clientX - rect.left;
+    const mid = canvas.width/2;
+
+    if (x>mid) {
+      g_globalAngle += 20;
+    } else {
+      g_globalAngle -= 20;
+    }
+  };
+
 
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
-  renderScene();
 
   tick();
 }
@@ -235,6 +250,7 @@ function renderScene(){
   //pass the matrix to the u_ModelMatrix attribute
   var globalRotMat=new Matrix4().rotate(g_globalAngle, 0, 1, 0);
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
+
 
   // Clear <canvas>
   gl.enable(gl.DEPTH_TEST);
