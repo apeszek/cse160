@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>CSE160 Assignment 2: Blocky Animal</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="500" height="500">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+    <p id="numdot"> XXX </p>
+
+    Animation:
+    <button type = "button" id = "animateLegMovementOn">ON</button>
+    <button type = "button" id = "animateLegMovementOff">OFF</button>
+    <br>
+    Leg Movement (doesn't work while animating)<input type = "range" min = "-30" max = "15" value = "0" class = "slider" id = "legMove">
+    <br>
+    Base Tail Movement (Joint 1) <input type = "range" min = "-50" max = "50" value = "0" class = "slider" id = "baseTailMove">
+    <br>
+    Upper Tail Movement (Joint 2)<input type = "range" min = "-180" max = "0" value = "-90" class = "slider" id = "upperTailMove">
+    <br>
+    Fur on Tail Movement(Joint 3) <input type = "range" min = "-45" max = "45" value = "0" class = "slider" id = "furTail">
+    <br>
+    Camera Angle <input type="range" min="0" max="360" value="5" class="slider" id="angleSlide">
+    <p>
+    
+
+
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="../lib/cuon-matrix.js"></script>
+    <script src="point.js"></script>
+    <script src="triangle.js"></script>
+    <script src="cube.js"></script>
+    <script src="circle.js"></script>
+    <script src="cylinder.js"></script>
+    <script src="world.js"></script>
+    <br>
+    <br>
+  </body>
+</html>
