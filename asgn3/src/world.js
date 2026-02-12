@@ -25,7 +25,7 @@ var FSHADER_SOURCE = `
   void main() {
     gl_FragColor = u_FragColor;
     gl_FragColor = vec4(v_UV, 1.0, 1.0);
-    //gl_FragColor = texture2D(u_Sampler0, v_UV);
+    gl_FragColor = texture2D(u_Sampler0, v_UV);
   }`
 
 // GLOBAL VARIABLES
@@ -144,6 +144,13 @@ function connectVariablesToGLSL(){
     return;
   }
 
+  //get the storage location of u_Sampler0
+  u_Sampler0 = gl.getUniformLocation(gl.program, "u_Sampler0");
+  if (!u_Sampler0){
+    console.log("Failed to get the storage location of u_Sampler0");
+    return;
+  }
+
   //set up initival value for matrix to identify
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
@@ -167,7 +174,6 @@ function actionsforHTML(){
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
 }
 
-
 function initTextures(gl, n){
   var image = new Image();
   if (!image){
@@ -177,6 +183,9 @@ function initTextures(gl, n){
 
   image.onload = function(){sendTextureToGLSL(image);};
   image.src = "sky.jpg";
+
+  console.log("finished running initTextures");
+  return true;
 }//ends initTextures function
 
 function sendTextureToGLSL(image){
@@ -187,15 +196,15 @@ function sendTextureToGLSL(image){
   }
 
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-
+  //enable texture unit0
   gl.activeTexture(gl.TEXTURE0);
-
+  //bind texture object to the target
   gl.bindTexture(gl.TEXTURE_2D, texture);
-
+  //set the texture parameters
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
+  //set the texture image
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-
+  //set the texture unit0 to the sampler
   gl.uniform1i(u_Sampler0, 0);
 
   console.log("finished loadTexture");
@@ -318,7 +327,6 @@ function renderScene(){
   //var testCube = new Cube();
   //testCube.color = [1.0, 1.0, 1.0, 1.0];
   //testCube.render();
-
   
   //draws the body - cylinder
   var body = new cylinder();
