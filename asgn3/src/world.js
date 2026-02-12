@@ -22,10 +22,21 @@ var FSHADER_SOURCE = `
   varying vec2 v_UV;
   uniform vec4 u_FragColor;
   uniform sampler2D u_Sampler0;
+  uniform int u_whichTexture;
   void main() {
-    gl_FragColor = u_FragColor;
-    gl_FragColor = vec4(v_UV, 1.0, 1.0);
-    gl_FragColor = texture2D(u_Sampler0, v_UV);
+    if (u_whichTexture == -2){                    //use color
+      gl_FragColor = u_FragColor;
+
+    } else if (u_whichTexture == -1){             //use UV debug color
+      gl_FragColor = vec4(v_UV, 1.0, 1.0);
+
+    } else if (u_whichTexture == 0){             //use texture0
+      gl_FragColor = texture2D(u_Sampler0, v_UV);
+
+    } else {                                      //error, put red
+      gl_FragColor = vec4(1, .2, .2, 1);
+    }
+    
   }`
 
 // GLOBAL VARIABLES
@@ -40,6 +51,7 @@ let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
 let u_Sampler0;
+let u_whichTexture;
 
 const POINT = 0;
 const TRIANGLE = 1;
@@ -148,6 +160,13 @@ function connectVariablesToGLSL(){
   u_Sampler0 = gl.getUniformLocation(gl.program, "u_Sampler0");
   if (!u_Sampler0){
     console.log("Failed to get the storage location of u_Sampler0");
+    return;
+  }
+
+    //get the storage location of u_whichTexture
+  u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
+  if (!u_whichTexture){
+    console.log("Failed to get the storage location of u_whichTexture");
     return;
   }
 
@@ -344,6 +363,7 @@ function renderScene(){
   //draws head - cube
   var head = new Cube();
   head.color = [0.85, 0.66, 0.47, 1.0];
+  head.textureNum = 0;
   head.matrix.scale(0.3, 0.35, 0.3);
   head.matrix.translate(-1.1, 0, -.5);
   head.matrix.rotate(0, 1, 0, 0);

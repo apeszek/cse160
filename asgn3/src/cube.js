@@ -4,11 +4,13 @@ class Cube {
     this.type = 'cube';
     this.color = [1.0, 1.0, 1.0, 1.0];
     this.matrix = new Matrix4();
+    this.textureNum = -1;
   }
   render() {
-    //var xy = this.position;
-    var rgba = this.color;
-    //var size = this.size;  
+    var rgba = this.color;  
+
+    //pass the texture number
+    gl.uniform1i(u_whichTexture, this.textureNum);
 
     // Pass the color of a point to u_FragColor variable
     gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -19,6 +21,7 @@ class Cube {
     // Draw: front - GOOD
     drawTriangle3DUV( [ 0,0,0,  1,1,0,  1,0,0], [1,0,  0,1,  1,1]); //new function
     //drawTriangle3DUV([0, 0, 0,  0, 1, 0,  1, 1, 0], [0,0, 0, 1,  1,1]);
+    
     //drawTriangle3D([0, 0, 0,  1, 1, 0,  1, 0, 0]); 
     drawTriangle3D([0, 0, 0,  0, 1, 0,  1, 1, 0]);
 
