@@ -1,29 +1,45 @@
 //COLOREDPOINT.JS
 // Vertex Shader Program
+console.log("JS FILE LOADED"); //debugging in console.log
+
 var VSHADER_SOURCE = `
+  precision mediump float;
   attribute vec4 a_Position;
+  attribute vec2 a_UV;
+  varying vec2 v_UV;
   uniform mat4 u_ModelMatrix;
   uniform mat4 u_GlobalRotateMatrix;
+  uniform mat4 u_ViewMatrix;
+  uniform mat4 u_ProjectionMatrix;
   void main() {
-    gl_Position = u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
+    gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
+    v_UV = a_UV;
   }`
 
 // Fragment shader program
 var FSHADER_SOURCE = `
   precision mediump float;
+  varying vec2 v_UV;
   uniform vec4 u_FragColor;
+  uniform sampler2D u_Sampler0;
   void main() {
     gl_FragColor = u_FragColor;
+    gl_FragColor = vec4(v_UV, 1.0, 1.0);
+    //gl_FragColor = texture2D(u_Sampler0, v_UV);
   }`
 
 // GLOBAL VARIABLES
 let canvas;
 let gl;
 let a_Position;
+let a_UV;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
+let u_ProjectionMatrix;
+let u_ViewMatrix;
 let u_GlobalRotateMatrix;
+let u_Sampler0;
 
 const POINT = 0;
 const TRIANGLE = 1;
@@ -85,6 +101,13 @@ function connectVariablesToGLSL(){
     return;
   }
 
+  // Get the storage location of a_UV 
+  // Getting the pointer position
+  a_UV = gl.getAttribLocation(gl.program, 'a_UV');
+  if (a_UV < 0) {
+    console.log('Failed to get the storage location of a_UV');
+    return;
+  }
   // Get the storage location of u_FragColor
   // Getting the javascript variable that a_position is using
   u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
@@ -104,6 +127,20 @@ function connectVariablesToGLSL(){
   u_GlobalRotateMatrix = gl.getUniformLocation(gl.program, 'u_GlobalRotateMatrix');
   if (!u_GlobalRotateMatrix) {
     console.log('Failed to get the storage location of u_GlobalRotateMatrix');
+    return;
+  }
+
+  //Get the storage location of u_viewMatrix
+  u_ViewMatrix = gl.getUniformLocation(gl.program, 'u_ViewMatrix');
+  if (!u_ViewMatrix) {
+    console.log('Failed to get the storage location of u_ViewMatrix');
+    return;
+  }
+
+  //Get the storage location of u_ProjectionMatrix
+  u_ProjectionMatrix = gl.getUniformLocation(gl.program, 'u_ProjectionMatrix');
+  if (!u_ProjectionMatrix) {
+    console.log('Failed to get the storage location of u_ProjectionMatrix');
     return;
   }
 
@@ -130,30 +167,44 @@ function actionsforHTML(){
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
 }
 
-//implements function for undo button
-function undo() {
-  if (g_shapesList.length == 0){
-    return;
-  }
-  const last = g_shapesList.pop();
-  g_stack.push(last);
 
-  renderScene();
-}
-
-//implements function for redo button
-function redo(){
-  if (g_stack.length == 0){
-    return;
+function initTextures(gl, n){
+  var image = new Image();
+  if (!image){
+    console.log("Failed to create the image object");
+    return false;
   }
-  const shape = g_stack.pop();
-  g_shapesList.push(shape);
-  
-  renderScene();
-}
+
+  image.onload = function(){sendTextureToGLSL(image);};
+  image.src = "sky.jpg";
+}//ends initTextures function
+
+function sendTextureToGLSL(image){
+  var texture = gl.createTexture();
+  if (!texture){
+    console.log("Failed to create the texture object");
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+  gl.activeTexture(gl.TEXTURE0);
+
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+  gl.uniform1i(u_Sampler0, 0);
+
+  console.log("finished loadTexture");
+}//ends loadTexture function
 
 //MAIN
 function main() {
+  console.log("main runs");
+  console.log("test");
   //calls function to set up webGL
   setUpWebGL();
 
@@ -163,10 +214,11 @@ function main() {
   //calls HTML action function
   actionsforHTML();
 
+
+  /*
   // Register function (event handler) to be called on a mouse press
   // calls click function,
   canvas.onmousedown = click;
-
   canvas.onclick = function(ev){
     const rect = canvas.getBoundingClientRect();
     const x = ev.clientX - rect.left;
@@ -178,16 +230,18 @@ function main() {
       g_globalAngle -= 20;
     }
   };
+  */
+  initTextures(gl,0);
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-  tick();
+  requestAnimationFrame(tick);
 }
 
 //tick function
 function tick(){
   g_seconds = performance.now()/1000.0;
-  console.log(g_seconds);
+  //console.log(g_seconds);
 
   updateAnimationAngles();
 
@@ -242,7 +296,16 @@ function convertCoordEventToGL(ev){
 //function to render all shapes
 function renderScene(){
   //checks time at start of function
-  var startTime = performance.now();
+  //var startTime = performance.now();
+  //console.log("rendering");
+
+  //pass the projection matrix
+  var projMat = new Matrix4();
+  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
+
+  //pass the view matrix
+  var viewMat = new Matrix4();
+  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
   
   //pass the matrix to the u_ModelMatrix attribute
   var globalRotMat=new Matrix4().rotate(g_globalAngle, 0, 1, 0);
@@ -252,6 +315,11 @@ function renderScene(){
   gl.enable(gl.DEPTH_TEST);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+  //var testCube = new Cube();
+  //testCube.color = [1.0, 1.0, 1.0, 1.0];
+  //testCube.render();
+
+  
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];
@@ -451,12 +519,15 @@ function renderScene(){
   furBall.matrix.rotate(g_furTail, 0, 1, 0);
   furBall.render();
 
+
+
   //checks the time at the end of the function (performance indicator)
-  var duration = performance.now() - startTime;
-  sendTextToHTML("fps: " + Math.floor(10000/duration)/10, "numdot");
+  //var duration = performance.now() - startTime;
+  //sendTextToHTML("fps: " + Math.floor(10000/duration)/10, "numdot");
 
 } // ends renderAllShapes functions
 
+/*
 //set the text of a HTML element function
 function sendTextToHTML(text, htmlID) {
   var htmlElm = document.getElementById(htmlID);
@@ -466,3 +537,4 @@ function sendTextToHTML(text, htmlID) {
   }
   htmlElm.innerHTML = text;
 }
+*/

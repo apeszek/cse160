@@ -17,7 +17,8 @@ class Cube {
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
 
     // Draw: front - GOOD
-   // gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
+    //drawTriangle3DUV( [ 0,0,0,  1,1,0,  1,0,0], [1,0,  0,1,  1,1]); //new function
+    //drawTriangle3DUV([0, 0, 0,  0, 1, 0,  1, 1, 0], [0,0, 0, 1,  1,1]);
     drawTriangle3D([0, 0, 0,  1, 1, 0,  1, 0, 0]); 
     drawTriangle3D([0, 0, 0,  0, 1, 0,  1, 1, 0]);
 
