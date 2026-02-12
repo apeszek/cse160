@@ -207,7 +207,6 @@ function initTextures(gl, n){
   image.onload = function(){sendTextureToGLSL(image);};
   image.src = "sky.jpg";
 
-  console.log("finished running initTextures");
   return true;
 }//ends initTextures function
 
@@ -246,23 +245,8 @@ function main() {
   //calls HTML action function
   actionsforHTML();
 
+  document.onkeydown = keydown;
 
-  /*
-  // Register function (event handler) to be called on a mouse press
-  // calls click function,
-  canvas.onmousedown = click;
-  canvas.onclick = function(ev){
-    const rect = canvas.getBoundingClientRect();
-    const x = ev.clientX - rect.left;
-    const mid = canvas.width/2;
-
-    if (x>mid) {
-      g_globalAngle += 20;
-    } else {
-      g_globalAngle -= 20;
-    }
-  };
-  */
   initTextures(gl,0);
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -312,6 +296,16 @@ function click(ev) {
   //calls function to renderAllShapes
   // draws every shape supposed to be in the screen
   renderScene();
+}
+
+function keydown(ev){
+  if (ev.keyCode ==87){  //if a, move left
+    g_eye[0] += 0.2;
+  } else if (ev.keyCode == 83){   //if s, move backwards
+    g_eye[0] -= 0.2;
+  }
+  renderAllShapes();
+  console.log(ev.keyCode);
 }
 
 function convertCoordEventToGL(ev){
