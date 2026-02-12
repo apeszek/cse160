@@ -80,7 +80,7 @@ let g_mouseIn = false;
 var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
-//CAMERA VIEW VARIABLES
+//CAMERA VIEW VARIABLES - delete later?
 var g_eye = [0,0,3];
 var g_at = [0, 0, -100];
 var g_up = [0, 1, 0];
@@ -235,7 +235,6 @@ function sendTextureToGLSL(image){
 //MAIN
 function main() {
   console.log("main runs");
-  console.log("test");
   //calls function to set up webGL
   setUpWebGL();
 
@@ -324,6 +323,7 @@ function renderScene(){
   //checks time at start of function
   //var startTime = performance.now();
   //console.log("rendering");
+  var g_camera = new Camera();
 
   //pass the projection matrix
   var projMat = new Matrix4();
@@ -332,7 +332,11 @@ function renderScene(){
 
   //pass the view matrix
   var viewMat = new Matrix4();
-  viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2],  g_at[0],g_at[1],g_at[2],  g_up[0],g_up[1],g_up[2]); //change where the camera shifts to
+  //viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2],  g_at[0],g_at[1],g_at[2],  g_up[0],g_up[1],g_up[2]); //change where the camera shifts to
+  viewMat.setLookAt(g_camera.eye.elements[0], g_camera.eye.elements[1], g_camera.eye.elements[2],
+                    g_camera.at.elements[0], g_camera.at.elements[1], g_camera.eye.elements[2],
+                    g_camera.up.elements[0], g_camera.up.elements[1], g_camera.up.elements[2]);
+
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
   
   //pass the matrix to the u_ModelMatrix attribute
