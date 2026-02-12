@@ -53,6 +53,7 @@ let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
+//CONST FOR SHAPES
 const POINT = 0;
 const TRIANGLE = 1;
 const CIRCLE = 2;
@@ -75,12 +76,15 @@ let g_furTail = 0;
 let g_animation = false;
 let g_mouseIn = false;
 
+//PERFORMANCE VARIABLES
 var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
-// initializes array to store the shapes
-var g_shapesList = [];
-var g_stack = [];
+//CAMERA VIEW VARIABLES
+var g_eye = [0,0,3];
+var g_at = [0, 0, -100];
+var g_up = [0, 1, 0];
+
 
 //function to set up WebGL
 function setUpWebGL(){
@@ -329,10 +333,12 @@ function renderScene(){
 
   //pass the projection matrix
   var projMat = new Matrix4();
+  projMat.setPerspective(80, canvas.width/canvas.height, 0.1, 100); //change first num to zoom out
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
   //pass the view matrix
   var viewMat = new Matrix4();
+  viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2],  g_at[0],g_at[1],g_at[2],  g_up[0],g_up[1],g_up[2]); //change where the camera shifts to
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
   
   //pass the matrix to the u_ModelMatrix attribute
