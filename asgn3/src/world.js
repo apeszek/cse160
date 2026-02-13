@@ -306,11 +306,11 @@ function keydown(ev){
   if (ev.keyCode ==65){  //if a, move left
     newCam.moveLeft();
   } else if (ev.keyCode == 68){   //if d, move right
-    g_eye[0] -= 0.2;
+    newCam.moveRight();
   } else if (ev.keyCode == 87){  //if w, move forward
-    g_eye[2] -= 0.2
+    newCam.moveForward();
   } else if (ev.keyCode == 83){   //if s, move backwards
-    g_eye[2] += 0.2
+    newCam.moveBackwards();
   } else if (ev.keyCode == 81){   //if q, turn to the left
 
   } else if (ev.keyCode == 69){   //uf e, turn to the right

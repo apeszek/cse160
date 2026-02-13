@@ -54,12 +54,12 @@ class Camera{
         this.updateView();
     }
 
-    right() {
+    moveRight(speed = 0.2) {
         let f = new Vector3(this.at.elements);
         f.sub(this.eye);
         f.normalize();
 
-        let s = new Vector3.cross(f, this.up);
+        let s = Vector3.cross(f, this.up);
         s.normalize();
         s.mul(speed);
         this.eye.add(s);
