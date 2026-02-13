@@ -80,11 +80,8 @@ let g_mouseIn = false;
 var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
-//CAMERA VIEW VARIABLES - delete later?
+//CAMERA VIEW VARIABLES
 let newCam;
-var g_eye = [0,0,0];
-var g_at = [0, 0, -1];
-var g_up = [0, 1, 0];
 
 
 //function to set up WebGL
@@ -307,7 +304,7 @@ function click(ev) {
 
 function keydown(ev){
   if (ev.keyCode ==65){  //if a, move left
-    g_eye[0] += 0.2;
+    newCam.moveLeft();
   } else if (ev.keyCode == 68){   //if d, move right
     g_eye[0] -= 0.2;
   } else if (ev.keyCode == 87){  //if w, move forward
@@ -368,7 +365,7 @@ function renderScene(){
   groundCube.matrix.scale(10, 0, 10);
   groundCube.matrix.translate(-0.5, -0.5, -0.5);
   groundCube.render();
-  
+
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];

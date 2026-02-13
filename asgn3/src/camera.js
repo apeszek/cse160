@@ -22,8 +22,8 @@ class Camera{
                                 this.up.elements[0], this.up.elements[1], this.up.elements[2]);
     }
     moveForward(speed = 0.2) {
-        let f = new Vector3();
-        f.set(this.at);
+        let f = new Vector3(this.at.elements);
+        //f.set(this.at);
         f.subtract(this.eye);
         f.normalize();
         f.mul(speed);
@@ -33,7 +33,7 @@ class Camera{
     }
 
     moveBackwards(speed = 0.2) {
-        let b = new Vector3();
+        let b = new Vector3(this.eye.elements);
         b.set(this.eye);
         b.subtract(this.at);
         b.normalize();
@@ -44,13 +44,12 @@ class Camera{
     }
 
     moveLeft(speed = 0.2) {
-        let f = new Vector3();
-        f.set(this.at);
-        f.subtract(this.eye);
+        let f = new Vector3(this.at.elements);
+        f.sub(this.eye);
         f.normalize();
 
-        let s = new Vector3();
-        s.set(this.up);
+        let s = new Vector3(this.up.elements);
+        //s.set(this.up);
         s.cross(f);
         s.normalize();
         s.mul(speed);
@@ -60,12 +59,12 @@ class Camera{
     }
 
     right() {
-        let f = new Vector3();
+        let f = new Vector3(this.at.elements);
         f.set(this.at);
         f.subtract(this.eye);
         f.normalize();
 
-        let s = new Vector3();
+        let s = new Vector3(f.elements);
         s.set(f);
         s.cross(this.up);
         s.normalize();
