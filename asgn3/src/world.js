@@ -81,8 +81,8 @@ var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
 //CAMERA VIEW VARIABLES - delete later?
-var g_eye = [0,0,3];
-var g_at = [0, 0, -100];
+var g_eye = [0,0,0];
+var g_at = [0, 0, -1];
 var g_up = [0, 1, 0];
 
 
@@ -205,8 +205,8 @@ function initTextures(gl, n){
   }
 
   image.onload = function(){sendTextureToGLSL(image);};
-  image.src = "sky.jpg";
-
+  image.src = "worldSky1.jpg";
+  console.log("image");
   return true;
 }//ends initTextures function
 
@@ -222,6 +222,8 @@ function sendTextureToGLSL(image){
   gl.activeTexture(gl.TEXTURE0);
   //bind texture object to the target
   gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   //set the texture parameters
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   //set the texture image
@@ -298,10 +300,18 @@ function click(ev) {
 }
 
 function keydown(ev){
-  if (ev.keyCode ==87){  //if a, move left
+  if (ev.keyCode ==65){  //if a, move left
     g_eye[0] += 0.2;
-  } else if (ev.keyCode == 83){   //if s, move backwards
+  } else if (ev.keyCode == 68){   //if d, move right
     g_eye[0] -= 0.2;
+  } else if (ev.keyCode == 87){  //if w, move forward
+    g_eye[2] -= 0.2
+  } else if (ev.keyCode == 83){   //if s, move backwards
+    g_eye[2] += 0.2
+  } else if (ev.keyCode == 81){   //if q, turn to the left
+
+  } else if (ev.keyCode == 69){   //uf e, turn to the right
+
   }
   renderAllShapes();
   console.log(ev.keyCode);
@@ -323,20 +333,19 @@ function renderScene(){
   //checks time at start of function
   //var startTime = performance.now();
   //console.log("rendering");
-  var g_camera = new Camera();
+  var g_camera= new Camera();
 
   //pass the projection matrix
   var projMat = new Matrix4();
-  projMat.setPerspective(80, canvas.width/canvas.height, 0.1, 100); //change first num to zoom out
+  projMat.setPerspective(80, canvas.width/canvas.height, 0.2, 100); //change first num to zoom out
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
   //pass the view matrix
   var viewMat = new Matrix4();
-  //viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2],  g_at[0],g_at[1],g_at[2],  g_up[0],g_up[1],g_up[2]); //change where the camera shifts to
-  viewMat.setLookAt(g_camera.eye.elements[0], g_camera.eye.elements[1], g_camera.eye.elements[2],
-                    g_camera.at.elements[0], g_camera.at.elements[1], g_camera.eye.elements[2],
-                    g_camera.up.elements[0], g_camera.up.elements[1], g_camera.up.elements[2]);
-
+  viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2],  g_at[0],g_at[1],g_at[2],  g_up[0],g_up[1],g_up[2]); //change where the camera shifts to
+  //viewMat.setLookAt(g_camera.eye.elements[0], g_camera.eye.elements[1], g_camera.eye.elements[2],
+  //                  g_camera.at.elements[0], g_camera.at.elements[1], g_camera.eye.elements[2],
+  //                  g_camera.up.elements[0], g_camera.up.elements[1], g_camera.up.elements[2]);
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
   
   //pass the matrix to the u_ModelMatrix attribute
@@ -347,10 +356,22 @@ function renderScene(){
   gl.enable(gl.DEPTH_TEST);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  //var testCube = new Cube();
-  //testCube.color = [1.0, 1.0, 1.0, 1.0];
-  //testCube.render();
+  //sky implementation
+  var skyCube = new Cube();
+  skyCube.color = [1.0, 1.0, 1.0, 1.0];
+  skyCube.textureNum = 0;
+  skyCube.matrix.scale(50,50,50);
+  skyCube.matrix.translate(-0.5, -0.5, -0.5);
+  skyCube.render();
   
+  //ground implementation
+  var groundCube = new Cube();
+  groundCube.color = [0.4, 0.7, 0.0, 1.0];
+  groundCube.textureNum = -2;
+  groundCube.matrix.translate(0, -.75, 0.0);
+  groundCube.matrix.scale(10, 0, 10);
+  groundCube.matrix.translate(-0.5, -0.5, -0.5);
+  groundCube.render();
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];
@@ -367,7 +388,7 @@ function renderScene(){
   //draws head - cube
   var head = new Cube();
   head.color = [0.85, 0.66, 0.47, 1.0];
-  head.textureNum = 0;
+  head.textureNum = -2;
   head.matrix.scale(0.3, 0.35, 0.3);
   head.matrix.translate(-1.1, 0, -.5);
   head.matrix.rotate(0, 1, 0, 0);

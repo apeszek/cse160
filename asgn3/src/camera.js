@@ -3,7 +3,7 @@ class Camera{
     constructor(){
         //this.fov = 
         this.eye = new Vector3([0,0,3]);
-        this.at = new Vector3([0, 0, -100]);
+        this.at = new Vector3([0, 0, 2]);
         this.up = new Vector3([0, 1, 0]);
     }
 
@@ -35,8 +35,8 @@ class Camera{
         f=f.divide(f.length());
         var s=f.cross(this.up);
         s=s.divide(s.length());
-        this.at = this.at.add(s);
-        this.eye = this.eye.add(s);
+        this.at = this.at.subtract(s);
+        this.eye = this.eye.subract(s);
     }
 
 }//end camera class
