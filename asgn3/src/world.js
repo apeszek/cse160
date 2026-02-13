@@ -81,6 +81,7 @@ var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
 //CAMERA VIEW VARIABLES - delete later?
+let newCam;
 var g_eye = [0,0,0];
 var g_at = [0, 0, -1];
 var g_up = [0, 1, 0];
@@ -222,8 +223,11 @@ function sendTextureToGLSL(image){
   gl.activeTexture(gl.TEXTURE0);
   //bind texture object to the target
   gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  //changes img to even dimensions
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
   //set the texture parameters
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   //set the texture image
@@ -245,6 +249,8 @@ function main() {
 
   //calls HTML action function
   actionsforHTML();
+
+  newCam = new Camera(canvas);
 
   document.onkeydown = keydown;
 
@@ -332,21 +338,11 @@ function convertCoordEventToGL(ev){
 function renderScene(){
   //checks time at start of function
   //var startTime = performance.now();
-  //console.log("rendering");
-  var g_camera= new Camera();
 
-  //pass the projection matrix
-  var projMat = new Matrix4();
-  projMat.setPerspective(80, canvas.width/canvas.height, 0.2, 100); //change first num to zoom out
-  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
-
-  //pass the view matrix
-  var viewMat = new Matrix4();
-  viewMat.setLookAt(g_eye[0],g_eye[1],g_eye[2],  g_at[0],g_at[1],g_at[2],  g_up[0],g_up[1],g_up[2]); //change where the camera shifts to
-  //viewMat.setLookAt(g_camera.eye.elements[0], g_camera.eye.elements[1], g_camera.eye.elements[2],
-  //                  g_camera.at.elements[0], g_camera.at.elements[1], g_camera.eye.elements[2],
-  //                  g_camera.up.elements[0], g_camera.up.elements[1], g_camera.up.elements[2]);
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
+  //var newCam= new Camera(canvas);
+  //pass matrix to projection and view
+  gl.uniformMatrix4fv(u_ProjectionMatrix, false, newCam.projMat.elements);
+  gl.uniformMatrix4fv(u_ViewMatrix, false, newCam.viewMat.elements);
   
   //pass the matrix to the u_ModelMatrix attribute
   var globalRotMat=new Matrix4().rotate(g_globalAngle, 0, 1, 0);
@@ -372,6 +368,7 @@ function renderScene(){
   groundCube.matrix.scale(10, 0, 10);
   groundCube.matrix.translate(-0.5, -0.5, -0.5);
   groundCube.render();
+  
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];

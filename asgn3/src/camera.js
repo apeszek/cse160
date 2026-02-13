@@ -1,42 +1,78 @@
 //camera class implementation
 class Camera{
-    constructor(){
-        //this.fov = 
-        this.eye = new Vector3([0,0,3]);
-        this.at = new Vector3([0, 0, 2]);
+    constructor(canvas){
+        this.fov = 60;
+        this.eye = new Vector3([0, 0, 0]);
+        this.at = new Vector3([0, 0, 1]);
         this.up = new Vector3([0, 1, 0]);
+
+        //view matrix
+        this.viewMat = new Matrix4();
+        this.viewMat.setLookAt(this.eye.elements[0], this.eye.elements[1], this.eye.elements[2],
+                                this.at.elements[0], this.at.elements[1], this.at.elements[2],
+                                this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+
+        //pass the projection matrix
+        this.projMat = new Matrix4();
+        this.projMat.setPerspective(this.fov, canvas.width/canvas.height, 0.1, 1000); //change first num to zoom out
+    }
+    updateView(){
+        this.viewMat.setLookAt(this.eye.elements[0], this.eye.elements[1], this.eye.elements[2],
+                                this.at.elements[0], this.at.elements[1], this.at.elements[2],
+                                this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+    }
+    moveForward(speed = 0.2) {
+        let f = new Vector3();
+        f.set(this.at);
+        f.subtract(this.eye);
+        f.normalize();
+        f.mul(speed);
+        this.eye.add(f);
+        this.at.add(f);
+        this.updateView();
     }
 
-    forward() {
-        var f = this.at.subtract(this.eye);
-        f=f.divide(f.length());
-        this.at = this.at.add(f);
-        this.eye = this.eye.add(f);
+    moveBackwards(speed = 0.2) {
+        let b = new Vector3();
+        b.set(this.eye);
+        b.subtract(this.at);
+        b.normalize();
+        b.mul(speed);
+        this.eye.add(b);
+        this.at.add(b);
+        this.updateView();
     }
 
-    back() {
-        var f = this.eye.subtract(this.at);
-        f=f.divide(f.length());
-        this.at = this.at.add(f);
-        this.eye = this.eye.add(f);
-    }
+    moveLeft(speed = 0.2) {
+        let f = new Vector3();
+        f.set(this.at);
+        f.subtract(this.eye);
+        f.normalize();
 
-    left() {
-        var f = this.eye.subtract(this.at);
-        f=f.divide(f.length());
-        var s=f.cross(this.up);
-        s=s.divide(s.length());
-        this.at = this.at.add(s);
-        this.eye = this.eye.add(s);
+        let s = new Vector3();
+        s.set(this.up);
+        s.cross(f);
+        s.normalize();
+        s.mul(speed);
+        this.eye.add(s);
+        this.at.add(s);
+        this.updateView();
     }
 
     right() {
-        var f = this.at.subtract(this.eye);
-        f=f.divide(f.length());
-        var s=f.cross(this.up);
-        s=s.divide(s.length());
-        this.at = this.at.subtract(s);
-        this.eye = this.eye.subract(s);
+        let f = new Vector3();
+        f.set(this.at);
+        f.subtract(this.eye);
+        f.normalize();
+
+        let s = new Vector3();
+        s.set(f);
+        s.cross(this.up);
+        s.normalize();
+        s.mul(speed);
+        this.eye.add(s);
+        this.at.add(s);
+        this.updateView();
     }
 
 }//end camera class
