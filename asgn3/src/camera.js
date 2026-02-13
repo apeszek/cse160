@@ -20,7 +20,9 @@ class Camera{
         this.viewMat.setLookAt(this.eye.elements[0], this.eye.elements[1], this.eye.elements[2],
                                 this.at.elements[0], this.at.elements[1], this.at.elements[2],
                                 this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+
     }
+
     moveForward(speed = 0.2) {
         let f = new Vector3(this.at.elements);
         f.sub(this.eye);
@@ -64,6 +66,36 @@ class Camera{
         s.mul(speed);
         this.eye.add(s);
         this.at.add(s);
+        this.updateView();
+    }
+
+    panLeft(alpha = 5){
+        let f = new Vector3(this.at.elements);
+        f.sub(this.eye);
+
+        let rotation = new Matrix4();
+        rotation.setRotate(alpha, this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+
+        let fPrime = rotation.multiplyVector3(f);
+
+        this.at = new Vector3(this.eye.elements);
+        this.at.add(fPrime);
+
+        this.updateView();
+    }
+
+    panRight(alpha = 5){
+        let f = new Vector3(this.at.elements);
+        f.sub(this.eye);
+
+        let rotation = new Matrix4();
+        rotation.setRotate(-alpha, this.up.elements[0], this.up.elements[1], this.up.elements[2]);
+
+        let fPrime = rotation.multiplyVector3(f);
+
+        this.at = new Vector3(this.eye.elements);
+        this.at.add(fPrime);
+
         this.updateView();
     }
 

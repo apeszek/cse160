@@ -312,9 +312,9 @@ function keydown(ev){
   } else if (ev.keyCode == 83){   //if s, move backwards
     newCam.moveBackwards();
   } else if (ev.keyCode == 81){   //if q, turn to the left
-
+    newCam.panLeft();
   } else if (ev.keyCode == 69){   //uf e, turn to the right
-
+    newCam.panRight();
   }
   renderAllShapes();
   console.log(ev.keyCode);
@@ -330,7 +330,7 @@ function convertCoordEventToGL(ev){
 
   return ([x,y]);
 }
-
+d
 //function to render all shapes
 function renderScene(){
   //checks time at start of function
@@ -353,7 +353,7 @@ function renderScene(){
   var skyCube = new Cube();
   skyCube.color = [1.0, 1.0, 1.0, 1.0];
   skyCube.textureNum = 0;
-  skyCube.matrix.scale(50,50,50);
+  skyCube.matrix.scale(1000,1000,1000);
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
   skyCube.render();
   
