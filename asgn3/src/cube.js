@@ -20,27 +20,29 @@ class Cube {
 
     // Draw: front - GOOD
     drawTriangle3DUV( [ 0,0,0,  1,1,0,  1,0,0], [1,0,  0,1,  1,1]); //new function
-    //drawTriangle3DUV([0, 0, 0,  0, 1, 0,  1, 1, 0], [0,0, 0, 1,  1,1]);
+    drawTriangle3DUV([0, 0, 0,  0, 1, 0,  1, 1, 0], [0,0, 0, 1,  1,1]);
     
     //drawTriangle3D([0, 0, 0,  1, 1, 0,  1, 0, 0]); 
-    drawTriangle3D([0, 0, 0,  0, 1, 0,  1, 1, 0]);
+    //drawTriangle3D([0, 0, 0,  0, 1, 0,  1, 1, 0]);
 
     //Draw: right - GOOD
     gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
-    drawTriangle3D([1,0,0,   1, 1, 0,  1, 1, 1]); 
-    drawTriangle3D([1,0,0,   1, 1, 1,  1, 0, 1]); 
+    //drawTriangle3DUV([1,0,0,   1, 0, 1,  1, 1, 1], [0,0, 0, 1, 1,1]); 
+    drawTriangle3DUV([0,0,0, 0,1,0, 0,1,1], [1,0, 0,1, 0,0]);
+    drawTriangle3DUV([0,0,0, 0,1,1, 0,0,1],[1,0, 0,1, 0,0]);
+    //drawTriangle3DUV([1,0,0,   1, 1, 1,  1, 1, 0], [0,0, 1, 1,  1,0]); 
 
     //Draw: top - GOOD
     //pass the color of a point to u_FragColor uniform variable
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
-    drawTriangle3D([0,1,0,   0, 1, 1,  1, 1, 1]);
-    drawTriangle3D([0,1,0,   1, 1, 1,  1, 1, 0]);
+    drawTriangle3DUV([0,1,0,   1, 1, 1,  0, 1, 1], [0,0, 1,1, 0,1]);
+    drawTriangle3DUV([0,1,0,   1, 1, 0,  1, 1, 1], [0,0, 1,0, 1,1]);
 
-    //Draw: back - GOOD
+    //Draw: back - GOOD MINECRAFT
     //pass the color of a point to u_FragColor uniform variable
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
-    drawTriangle3D([0,1,1,   1, 0, 1,  0, 0, 1]);
-    drawTriangle3D([0,1,1,   1, 1, 1,  1, 0, 1]);
+    drawTriangle3DUV([0,0,1, 1,1,1, 1,0,1], [0,0, 1,1, 1,0]);
+    drawTriangle3DUV([0,0,1, 0,1,1, 1,1,1], [0,0, 0,1, 1,1]);
 
     //Draw: bottom - GOOD
     gl.uniform4f(u_FragColor, rgba[0]*.95, rgba[1]*.95, rgba[2]*.95, rgba[3]);
@@ -49,8 +51,14 @@ class Cube {
 
     //Draw: left - GOOD
     gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
-    drawTriangle3D([0,0,0,   0, 1, 0,  0, 1, 1]);
-    drawTriangle3D([0,0,0,   0, 1, 1,  0, 0, 1]); 
+    //drawTriangle3DUV([0,0,0, 0,1,1, 0,1,0], [0,0, 1,1, 1,0]);
+    
+    //drawTriangle3DUV([0,0,0, 0,1,0, 0,1,1], [1,0, 0,1, 0,0]);
+    
+    //drawTriangle3DUV([0,0,0, 0,0,1, 0,1,1], [0,0, 0,1, 1,1]);
+
+    drawTriangle3DUV([0,0,0, 0,0,1, 0,1,1], [0,0, 1,0, 1,1]);
+    drawTriangle3DUV([0,0,0, 0,1,1, 0,0,1],[0,0, 1,1, 1,0]);
 
   } // end render 
 

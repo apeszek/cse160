@@ -448,6 +448,10 @@ function renderScene(){
   //calls function to draw the map of walls
 
   drawMap();
+  var testCube = new Cube();
+  testCube.textureNum = 1;
+  testCube.matrix.translate(-3, 0, 0);
+  testCube.render();
 
   //draws the body - cylinder
   var body = new cylinder();
