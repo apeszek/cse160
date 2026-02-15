@@ -22,6 +22,7 @@ var FSHADER_SOURCE = `
   varying vec2 v_UV;
   uniform vec4 u_FragColor;
   uniform sampler2D u_Sampler0;
+  uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   void main() {
     if (u_whichTexture == -2){                    //use color
@@ -30,9 +31,12 @@ var FSHADER_SOURCE = `
     } else if (u_whichTexture == -1){             //use UV debug color
       gl_FragColor = vec4(v_UV, 1.0, 1.0);
 
-    } else if (u_whichTexture == 0){             //use texture0
+    } else if (u_whichTexture == 0){             //use texture0 - sky
       gl_FragColor = texture2D(u_Sampler0, v_UV);
 
+    } else if (u_whichTexture == 1){              //use texture1 - minecraft block
+      gl_FragColor = texture2D(u_Sampler1, v_UV);
+    
     } else {                                      //error, put red
       gl_FragColor = vec4(1, .2, .2, 1);
     }
@@ -51,6 +55,7 @@ let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
 let u_Sampler0;
+let u_Sampler1;
 let u_whichTexture;
 
 //CONST FOR SHAPES
@@ -83,38 +88,38 @@ var g_seconds = performance.now()/1000.0-g_startTime;
 //CAMERA + MAP VARIABLES
 let newCam;
 var g_map = [
-  [1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,1,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,1,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,1,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,1,1,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1]
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
+  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
+  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
 ];
 
 
@@ -198,6 +203,12 @@ function connectVariablesToGLSL(){
     console.log("Failed to get the storage location of u_Sampler0");
     return;
   }
+  //get the storage location of u_Sampler1
+  u_Sampler1 = gl.getUniformLocation(gl.program, "u_Sampler1");
+  if (!u_Sampler1){
+    console.log("Failed to get the storage location of u_Sampler1");
+    return;
+  }
 
     //get the storage location of u_whichTexture
   u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
@@ -229,42 +240,58 @@ function actionsforHTML(){
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
 }
 
-function initTextures(gl, n){
+function initTextures(gl, textureNum){
   var image = new Image();
   if (!image){
     console.log("Failed to create the image object");
     return false;
   }
-
-  image.onload = function(){sendTextureToGLSL(image);};
-  image.src = "worldSky1.jpg";
-  console.log("image");
-  return true;
+  if (textureNum == 0){
+    image.onload = function(){sendTextureToGLSL(image, 0);};
+    image.src = "worldSky1.jpg";
+    console.log("sky image");
+    return true;
+  } else if (textureNum == 1){
+    image.onload = function(){sendTextureToGLSL(image, 1);};
+    image.src = "minecraft.jpg";
+    console.log("minecraft image");
+    return true;
+  }
 }//ends initTextures function
 
-function sendTextureToGLSL(image){
+function sendTextureToGLSL(image, textureNum){
   var texture = gl.createTexture();
   if (!texture){
     console.log("Failed to create the texture object");
     return false;
   }
-
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-  //enable texture unit0
-  gl.activeTexture(gl.TEXTURE0);
-  //bind texture object to the target
-  gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  //changes img to even dimensions
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-  //set the texture parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  //set the texture image
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  //set the texture unit0 to the sampler
-  gl.uniform1i(u_Sampler0, 0);
+  if (textureNum == 0){       //sky texture
+    gl.activeTexture(gl.TEXTURE0);
+  } else if (textureNum == 1){     //minecraft texture
+    gl.activeTexture(gl.TEXTURE1);
+  }
+    //bind texture object to the target
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    //changes img to even dimensions
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    //set the texture parameters
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    //set the texture image
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+  
+  if (textureNum == 0){     //sky texture
+    //set the texture unit0 to the sampler
+    gl.uniform1i(u_Sampler0, 0); 
+  } else if (textureNum == 1){      //minecraft texture
+    //set the texture unit1 to the sampler
+    gl.uniform1i(u_Sampler1, 1);
+  }
 
   console.log("finished loadTexture");
 }//ends loadTexture function
@@ -286,6 +313,7 @@ function main() {
   document.onkeydown = keydown;
 
   initTextures(gl,0);
+  initTextures(gl,1);
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -370,12 +398,13 @@ function drawMap(){
   for (x=0; x < 32; x++){
     for (y=0; y < 32; y++){
       //console.log(x,y);
-      //if (g_map[x][y]==1){
-      if (x==0 || x==31 || y==0 ||y==31){
+      if (g_map[x][y]==1){
+      //if (x==0 || x==31 || y==0 ||y==31){
         var blocks = new Cube();
         blocks.color = [0.9, 0.9, 0.9, 1.0];
-        blocks.textureNum = -2;
-        blocks.matrix.translate(x-4, -0.75, y-4);
+        blocks.textureNum = 1;
+        blocks.matrix.scale(0.3, 0.3, 0.3);
+        blocks.matrix.translate(x-32, -0.75, y-32);
         blocks.render();
       }
     }
@@ -416,10 +445,14 @@ function renderScene(){
   groundCube.matrix.translate(-0.5, -0.5, -0.5);
   groundCube.render();
 
-  //drawMap();
+  //calls function to draw the map of walls
+
+  drawMap();
+
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];
+  //body.textureNum = -2;
   body.a = 0.4;       // x-radius
   body.b = 0.3;      // z-radius
   body.height = 1.1;
@@ -443,6 +476,7 @@ function renderScene(){
   //left 
   var leftHornTop = new Cube();
   leftHornTop.color = [0.6, 0.4, 0.2, 1.0];
+  //leftHorn.textureNum = -2;
   leftHornTop.matrix.rotate(45, 0, 1, 0);
   leftHornTop.matrix.rotate(5, 0, 0, 1);
   leftHornTop.matrix.rotate(-30, 1, 0, 0);
