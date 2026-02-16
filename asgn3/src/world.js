@@ -447,7 +447,7 @@ function renderScene(){
 
   //calls function to draw the map of walls
 
-  drawMap();
+  //drawMap();
   var testCube = new Cube();
   testCube.textureNum = 1;
   testCube.matrix.translate(-3, 0, 0);
