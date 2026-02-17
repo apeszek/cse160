@@ -86,41 +86,29 @@ var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
 //CAMERA + MAP VARIABLES
-let newCam;
-var g_map = [
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0],
-  [0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,1,0,0,0,1,0],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-  [1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,1],
-];
+//let newCam;
+let g_map = [];
+let worldSize = 32;
+let worldBlocks = [];
+
+//creates the array for the map
+for (let x = 0; x < worldSize; x++){
+  g_map[x] = [];
+  for (let z = 0; z < worldSize; z++){
+    if (x == 0 || z == 0 || x == worldSize-1 || z == worldSize -1){
+      g_map[x][z] = 3;
+    } else {
+      g_map[x][z] = 0;
+    }
+  }
+}
+for (let x = 1; x < worldSize - 1; x++){
+  for (let z = 1; z < worldSize - 1; z++){
+    if (Math.random() < 0.07){
+      g_map[x][z] = Math.floor(Math.random()*3)+1;
+    }
+  }
+}
 
 
 //function to set up WebGL
@@ -130,13 +118,17 @@ function setUpWebGL(){
 
   // Get the rendering context for WebGL
   //gl = getWebGLContext(canvas);
-  gl = canvas.getContext('webgl', { preserveDrawingBuffer: true});
+  gl = canvas.getContext('webgl');
+  //if (!canvas){
+  //  console.log("canvas webgl not found");
+  //}
+  //gl = 
   if (!gl) {
     console.log('Failed to get the rendering context for WebGL');
     return;
   }
-  gl.enable(gl.DEPTH_TEST);
-}
+  //gl.enable(gl.DEPTH_TEST);
+} 
 
 //function to connect variables to GLSL
 function connectVariablesToGLSL(){
@@ -308,12 +300,16 @@ function main() {
   //calls HTML action function
   actionsforHTML();
 
+  buildWorld();
+
   newCam = new Camera(canvas);
 
   document.onkeydown = keydown;
 
+  //load textures
   initTextures(gl,0);
   initTextures(gl,1);
+
   // Specify the color for clearing <canvas>
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -338,6 +334,7 @@ function updateAnimationAngles() {
   }
 }
 
+/*
 // click function
 function click(ev) {
   // extracts the event click and returns it in WebGL coords
@@ -364,6 +361,8 @@ function click(ev) {
   renderScene();
 }
 
+*/
+
 function keydown(ev){
   if (ev.keyCode == 65){  //if a, move left
     newCam.moveLeft();
@@ -378,7 +377,7 @@ function keydown(ev){
   } else if (ev.keyCode == 69){   //uf e, turn to the right
     newCam.panRight();
   }
-  renderAllShapes();
+  renderScene();
   console.log(ev.keyCode);
 }
 
@@ -394,26 +393,38 @@ function convertCoordEventToGL(ev){
 }
 
 //function to draw the map
-function drawMap(){
-  for (x=0; x < 32; x++){
-    for (y=0; y < 32; y++){
-      //console.log(x,y);
-      if (g_map[x][y]==1){
-      //if (x==0 || x==31 || y==0 ||y==31){
-        var blocks = new Cube();
-        blocks.color = [0.9, 0.9, 0.9, 1.0];
-        blocks.textureNum = 1;
-        blocks.matrix.scale(0.3, 0.3, 0.3);
-        blocks.matrix.translate(x-32, -0.75, y-32);
-        blocks.render();
+function buildWorld(){
+  const size = 0.5;
+  const offset = worldSize/2;
+
+
+  for (let x = 0; x < worldSize; x++){
+    for (let z = 0; z < worldSize; z++){
+      let height = g_map[x][z];
+        for (let y = 0; y < height; y++){
+          var blocks = new Cube();
+          blocks.textureNum = 1;
+          blocks.matrix.setTranslate((x - offset) * size,
+                  y * size - 1,
+                  (z - offset) * size);
+
+          blocks.matrix.scale(size, size, size);
+          worldBlocks.push(blocks);
+        }
       }
     }
   }
+
+function drawMap(){
+  for (let block of worldBlocks){
+    block.render();
+  }
 }
+
 //function to render all shapes
 function renderScene(){
   //checks time at start of function
-  //var startTime = performance.now();
+  var startTime = performance.now();
 
 
   //pass matrix to projection and view
@@ -432,7 +443,7 @@ function renderScene(){
   var skyCube = new Cube();
   skyCube.color = [1.0, 1.0, 1.0, 1.0];
   skyCube.textureNum = 0;
-  skyCube.matrix.scale(1000,1000,1000);
+  skyCube.matrix.scale(100,100,100);
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
   skyCube.render();
   
@@ -440,23 +451,23 @@ function renderScene(){
   var groundCube = new Cube();
   groundCube.color = [0.4, 0.7, 0.0, 1.0];
   groundCube.textureNum = -2;
-  groundCube.matrix.translate(0, -.75, 0.0);
-  groundCube.matrix.scale(100, 0, 100);
+  groundCube.matrix.translate(0, -1, 0.0);
+  groundCube.matrix.scale(worldSize, 0.1, worldSize);
   groundCube.matrix.translate(-0.5, -0.5, -0.5);
   groundCube.render();
 
   //calls function to draw the map of walls
+  drawMap();
 
-  //drawMap();
   var testCube = new Cube();
   testCube.textureNum = 1;
   testCube.matrix.translate(-3, 0, 0);
-  testCube.render();
+  //testCube.render();
 
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];
-  //body.textureNum = -2;
+  body.textureNum = -2;
   body.a = 0.4;       // x-radius
   body.b = 0.3;      // z-radius
   body.height = 1.1;
@@ -658,12 +669,12 @@ function renderScene(){
 
 
   //checks the time at the end of the function (performance indicator)
-  //var duration = performance.now() - startTime;
-  //sendTextToHTML("fps: " + Math.floor(10000/duration)/10, "numdot");
+  var duration = performance.now() - startTime;
+  sendTextToHTML("fps: " + Math.floor(10000/duration)/10, "numdot");
 
 } // ends renderAllShapes functions
 
-/*
+
 //set the text of a HTML element function
 function sendTextToHTML(text, htmlID) {
   var htmlElm = document.getElementById(htmlID);
@@ -673,4 +684,3 @@ function sendTextToHTML(text, htmlID) {
   }
   htmlElm.innerHTML = text;
 }
-*/

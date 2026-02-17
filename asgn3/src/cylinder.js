@@ -18,6 +18,8 @@ class cylinder {
   render() {
     const rgba = this.color;
 
+    gl.uniform1i(u_whichTexture, this.textureNum);
+
     gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
 
