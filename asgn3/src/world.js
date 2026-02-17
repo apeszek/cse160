@@ -86,7 +86,12 @@ var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
 //CAMERA + MAP VARIABLES
-//let newCam;
+let newCam;
+let g_mouseLastX = null;
+let g_mouseLastY = null;
+let g_mouseSensitivity = 0.3;
+let g_mouseDown = false;
+
 let g_map = [];
 let worldSize = 32;
 let worldBlocks = [];
@@ -117,12 +122,8 @@ function setUpWebGL(){
   canvas = document.getElementById('webgl');
 
   // Get the rendering context for WebGL
-  //gl = getWebGLContext(canvas);
   gl = canvas.getContext('webgl');
-  //if (!canvas){
-  //  console.log("canvas webgl not found");
-  //}
-  //gl = 
+
   if (!gl) {
     console.log('Failed to get the rendering context for WebGL');
     return;
@@ -306,6 +307,12 @@ function main() {
 
   document.onkeydown = keydown;
 
+  //camera rotation with mouse
+  canvas.onmousedown = () => g_mouseDown = true;
+  canvas.onmouseup = () => g_mouseDown = false;
+  canvas.onmouseleave = () => g_mouseDown = false;
+  canvas.onmousemove = mouseMove;
+
   //load textures
   initTextures(gl,0);
   initTextures(gl,1);
@@ -314,6 +321,26 @@ function main() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
   requestAnimationFrame(tick);
+}
+
+//mouseMove function 
+function mouseMove(ev){
+  if (!g_mouseDown) return;
+
+  if (g_mouseLastX == null){
+    g_mouseLastX = ev.clientX;
+    g_mouseLastY = ev.clientY;
+    return;
+  }
+  let x = ev.clientX - g_mouseLastX;
+  let y = ev.clientY - g_mouseLastY;
+
+  g_mouseLastX = ev.clientX;
+  g_mouseLastY = ev.clientY;
+
+  newCam.panRight(x * g_mouseSensitivity);
+
+  renderScene()
 }
 
 //tick function
