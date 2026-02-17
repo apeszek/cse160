@@ -96,24 +96,30 @@ let g_map = [];
 let worldSize = 32;
 let worldBlocks = [];
 
+let skyCube;
+let groundCube;
+
 //creates the array for the map
-for (let x = 0; x < worldSize; x++){
-  g_map[x] = [];
-  for (let z = 0; z < worldSize; z++){
-    if (x == 0 || z == 0 || x == worldSize-1 || z == worldSize -1){
-      g_map[x][z] = 3;
-    } else {
-      g_map[x][z] = 0;
+function createMap(){
+  for (let x = 0; x < worldSize; x++){
+    g_map[x] = [];
+    for (let z = 0; z < worldSize; z++){
+      if (x == 0 || z == 0 || x == worldSize-1 || z == worldSize -1){
+        g_map[x][z] = 3;
+      } else {
+        g_map[x][z] = 0;
+      }
+    }
+  }
+  for (let x = 1; x < worldSize - 1; x++){
+    for (let z = 1; z < worldSize - 1; z++){
+      if (Math.random() < 0.07){
+        g_map[x][z] = Math.floor(Math.random()*3)+1;
+      }
     }
   }
 }
-for (let x = 1; x < worldSize - 1; x++){
-  for (let z = 1; z < worldSize - 1; z++){
-    if (Math.random() < 0.06){
-      g_map[x][z] = Math.floor(Math.random()*3)+1;
-    }
-  }
-}
+
 
 
 //function to set up WebGL
@@ -301,6 +307,23 @@ function main() {
   //calls HTML action function
   actionsforHTML();
 
+    //sky implementation
+  skyCube = new Cube();
+  skyCube.color = [1.0, 1.0, 1.0, 1.0];
+  skyCube.textureNum = 0;
+  skyCube.matrix.scale(100,100,100);
+  skyCube.matrix.translate(-0.5, -0.5, -0.5);
+  
+  //ground implementation
+  groundCube = new Cube();
+  groundCube.color = [0.4, 0.7, 0.0, 1.0];
+  groundCube.textureNum = -2;
+  groundCube.matrix.translate(0, -1, 0.0);
+  groundCube.matrix.scale(worldSize, 0.01, worldSize);
+  groundCube.matrix.translate(-0.5, 0, -0.5);
+
+  createMap();
+
   buildWorld();
 
   newCam = new Camera(canvas);
@@ -308,8 +331,8 @@ function main() {
   document.onkeydown = keydown;
 
   //camera rotation with mouse
-  canvas.onmousedown = () => g_mouseDown = true;
-  canvas.onmouseup = () => g_mouseDown = false;
+  canvas.onmousedown = (ev) => {g_mouseDown = true; g_mouseLastX = ev.clientX; g_mouseLastY = ev.clientY;};
+  canvas.onmouseup = () => {g_mouseDown = false; g_mouseLastX = null; g_mouseLastY = null;};
   canvas.onmouseleave = () => g_mouseDown = false;
   canvas.onmousemove = mouseMove;
 
@@ -403,7 +426,11 @@ function keydown(ev){
     newCam.panLeft();
   } else if (ev.keyCode == 69){   //uf e, turn to the right
     newCam.panRight();
-  }
+  } else if (ev.keyCode == 49 || ev.keyCode == 97){  //if 1, add block
+    addBlock();
+  } else if (ev.keyCode == 48 || ev.keyCode == 96) {    //if 0, remove block
+    removeBlock();
+  }  
   renderScene();
   console.log(ev.keyCode);
 }
@@ -418,10 +445,49 @@ function convertCoordEventToGL(ev){
 
   return ([x,y]);
 }
+//function to find the block in front of the camera (to add and delete)
+function getBlock(){
+  let x = newCam.at.elements[0] - newCam.eye.elements[0];
+  let z = newCam.at.elements[2] - newCam.eye.elements[2];
 
+  let len = Math.hypot(x, z);
+  x /=len;
+  z /= len;
+
+  const targetX = newCam.eye.elements[0] + x;
+  const targetZ = newCam.eye.elements[2] + z;
+
+  return{
+    x: Math.floor(targetX + worldSize/2),
+    z: Math.floor(targetZ + worldSize/2)
+  };
+}
+
+function addBlock(){
+  const {x, z} = getBlock();
+  if (x < 0 || x >= worldSize || z <0 || z >= worldSize){
+    return;
+  }
+  if (g_map[x][z] < 4){
+    g_map[x][z]++;
+    buildWorld();
+  }
+}
+
+function removeBlock(){
+  const {x, z} = getBlock();
+  if (x < 0 || x >= worldSize || z <0 || z >= worldSize){
+    return;
+  }
+  if (g_map[x][z] > 0){
+    g_map[x][z]--
+    buildWorld();
+  }
+}
 //function to draw the map
 function buildWorld(){
-  const size = 1;
+  worldBlocks = [];
+  const size = 0.9;
   const offset = worldSize/2;
 
 
@@ -466,26 +532,12 @@ function renderScene(){
   gl.enable(gl.DEPTH_TEST);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  //sky implementation
-  var skyCube = new Cube();
-  skyCube.color = [1.0, 1.0, 1.0, 1.0];
-  skyCube.textureNum = 0;
-  skyCube.matrix.scale(100,100,100);
-  skyCube.matrix.translate(-0.5, -0.5, -0.5);
   skyCube.render();
-  
-  //ground implementation
-  var groundCube = new Cube();
-  groundCube.color = [0.4, 0.7, 0.0, 1.0];
-  groundCube.textureNum = -2;
-  groundCube.matrix.translate(0, -1, 0.0);
-  groundCube.matrix.scale(worldSize, 0.01, worldSize);
-  groundCube.matrix.translate(-0.5, 0, -0.5);
   groundCube.render();
-
   //calls function to draw the map of walls
   drawMap();
 
+  /*
   var testCube = new Cube();
   testCube.textureNum = 1;
   testCube.matrix.translate(-3, 0, 0);
@@ -692,7 +744,7 @@ function renderScene(){
   furBall.matrix.translate(0, 0, 2);
   furBall.matrix.rotate(g_furTail, 0, 1, 0);
   furBall.render();
-
+*/
 
 
   //checks the time at the end of the function (performance indicator)
