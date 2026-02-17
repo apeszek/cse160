@@ -104,7 +104,7 @@ for (let x = 0; x < worldSize; x++){
 }
 for (let x = 1; x < worldSize - 1; x++){
   for (let z = 1; z < worldSize - 1; z++){
-    if (Math.random() < 0.07){
+    if (Math.random() < 0.06){
       g_map[x][z] = Math.floor(Math.random()*3)+1;
     }
   }
@@ -127,7 +127,7 @@ function setUpWebGL(){
     console.log('Failed to get the rendering context for WebGL');
     return;
   }
-  //gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.DEPTH_TEST);
 } 
 
 //function to connect variables to GLSL
@@ -394,7 +394,7 @@ function convertCoordEventToGL(ev){
 
 //function to draw the map
 function buildWorld(){
-  const size = 0.5;
+  const size = 1;
   const offset = worldSize/2;
 
 
@@ -452,8 +452,8 @@ function renderScene(){
   groundCube.color = [0.4, 0.7, 0.0, 1.0];
   groundCube.textureNum = -2;
   groundCube.matrix.translate(0, -1, 0.0);
-  groundCube.matrix.scale(worldSize, 0.1, worldSize);
-  groundCube.matrix.translate(-0.5, -0.5, -0.5);
+  groundCube.matrix.scale(worldSize, 0.01, worldSize);
+  groundCube.matrix.translate(-0.5, 0, -0.5);
   groundCube.render();
 
   //calls function to draw the map of walls
