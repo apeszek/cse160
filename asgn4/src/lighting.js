@@ -6,7 +6,9 @@ var VSHADER_SOURCE = `
   precision mediump float;
   attribute vec4 a_Position;
   attribute vec2 a_UV;
+  attribute vec3 a_Normal;
   varying vec2 v_UV;
+  varying vec3 v_Normal;
   uniform mat4 u_ModelMatrix;
   uniform mat4 u_GlobalRotateMatrix;
   uniform mat4 u_ViewMatrix;
@@ -14,18 +16,23 @@ var VSHADER_SOURCE = `
   void main() {
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
     v_UV = a_UV;
+    v_Normal = a_Normal;
   }`
 
 // Fragment shader program
 var FSHADER_SOURCE = `
   precision mediump float;
   varying vec2 v_UV;
+  varying vec3 v_Normal;
   uniform vec4 u_FragColor;
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   void main() {
-    if (u_whichTexture == -2){                    //use color
+    if (u_whichTexture == -3){                    // use normal
+      gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);
+
+    } else if (u_whichTexture == -2){             //use color
       gl_FragColor = u_FragColor;
 
     } else if (u_whichTexture == -1){             //use UV debug color
@@ -73,13 +80,14 @@ let g_globalAngle = 0;
 let g_globalAngleX = 0;
 let g_globalAngleY = 0;
 
-//GLOBALS (animation and slider movement)
+//GLOBALS (html variables)
 let g_legMove = 0;
 let g_baseTailMove = 0;
 let g_upperTailMove = 0;
 let g_furTail = 0;
 let g_animation = false;
 let g_mouseIn = false;
+let g_normalOn = false;
 
 //PERFORMANCE VARIABLES
 var g_startTime = performance.now()/1000.0;
@@ -161,6 +169,12 @@ function connectVariablesToGLSL(){
     console.log('Failed to get the storage location of a_UV');
     return;
   }
+  // Get the storage location of a_Normal
+  a_Normal = gl.getAttribLocation(gl.program, 'a_Normal');
+  if (a_Normal < 0) {
+    console.log('Failed to get the storage location of a_Normal');
+    return;
+  }
   // Get the storage location of u_FragColor
   // Getting the javascript variable that a_position is using
   u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
@@ -225,6 +239,10 @@ function connectVariablesToGLSL(){
 
 //Actions for HTML UI Elements
 function actionsforHTML(){
+  //Buttons - Normal on/off
+  document.getElementById('normalOn').onclick = function() {g_normalOn = true;};
+  document.getElementById('normalOff').onclick = function() {g_normalOn = false;};
+
   //Buttons - Animation on/off
   document.getElementById('animateLegMovementOn').onclick = function() {g_animation = true;};
   document.getElementById('animateLegMovementOff').onclick = function() {g_animation = false;};
