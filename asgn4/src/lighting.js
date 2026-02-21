@@ -111,6 +111,8 @@ function createMap(){
       }
     }
   }
+  /*
+  // REMOVES THE RANDOMIZATION OF WORLD BLOCKS, KEEPS WORLD BORDER
   for (let x = 1; x < worldSize - 1; x++){
     for (let z = 1; z < worldSize - 1; z++){
       if (Math.random() < 0.07){
@@ -118,9 +120,8 @@ function createMap(){
       }
     }
   }
+  */
 }
-
-
 
 //function to set up WebGL
 function setUpWebGL(){
@@ -484,7 +485,7 @@ function removeBlock(){
     buildWorld();
   }
 }
-//function to draw the map
+//function to build the world
 function buildWorld(){
   worldBlocks = [];
   const size = 0.9;
