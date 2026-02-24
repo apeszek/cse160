@@ -18,35 +18,36 @@ class Cube {
     //Pass matrix to matrix attribute
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
 
-    // Draw: front - 
+    // Draw: front - GOOD
     drawTriangle3DUVNormal([ 0,0,0,  1,1,0,  1,0,0], [0,0,  1,1,  1,0], [0,0,-1,   0,0,-1,   0,0,-1]); //new function
     drawTriangle3DUVNormal([0, 0, 0,  0, 1, 0,  1, 1, 0], [0,0, 0, 1,  1,1], [0,0,-1,  0,0,-1,  0,0,-1]);
     
-    //Draw: right -
+    //Draw: right - GOOD
     gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
     drawTriangle3DUVNormal([1,0,0,   1, 1, 0,  1, 1, 1], [0,0, 0,1, 1,1], [1,0,0,  1,0,0,  1,0,0]); 
     drawTriangle3DUVNormal([1,0,0,   1, 1, 1,  1, 0, 1], [0,0, 1,1, 1,0], [1,0,0,  1,0,0,  1,0,0]); 
     
-    //Draw: top - 
+    //Draw: bottom - GOOD
     //pass the color of a point to u_FragColor uniform variable
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
-    drawTriangle3DUVNormal([0,1,0,   1, 1, 1,  0, 1, 1], [0,0, 1,1, 0,1], [0,1,0,  0,1,0,  0,1,0]);
     drawTriangle3DUVNormal([0,1,0,   1, 1, 0,  1, 1, 1], [0,0, 1,0, 1,1], [0,1,0,  0,1,0,  0,1,0]);
+    drawTriangle3DUVNormal([0,1,0,   1, 1, 1,  0, 1, 1], [0,0, 1,1, 0,1], [0,1,0,  0,1,0,  0,1,0]);
 
-    //Draw: back - 
+    //Draw: back - GOOD
     //pass the color of a point to u_FragColor uniform variable
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
     drawTriangle3DUVNormal([0,0,1, 1,1,1, 1,0,1], [0,0, 1,1, 1,0], [0,0,1,  0,0,1,  0,0,1]);
     drawTriangle3DUVNormal([0,0,1, 0,1,1, 1,1,1], [0,0, 0,1, 1,1], [0,0,1,  0,0,1,  0,0,1]);
 
-    //Draw: bottom - NEED TO FIX UVS
+    //Draw: top - 
     gl.uniform4f(u_FragColor, rgba[0]*.95, rgba[1]*.95, rgba[2]*.95, rgba[3]);
     drawTriangle3DUVNormal([0,0,0,   0, 0, 1,  1, 0, 1], [0,0,  1,1,  1,0], [0,-1,0,  0,-1,0,  0,-1,0]);
-    drawTriangle3DUVNormal([0,0,0,   0, 0, 1,  1, 0, 1], [0,0,  0,1,  1,1], [0,-1,0,  0,-1,0,  0,-1,0]);
+    drawTriangle3DUVNormal([0,0,0,   1, 0, 1,  1, 0, 0], [0,0,  1,0,  0,1], [0,-1,0,  0,-1,0,  0,-1,0]);
 
-    //Draw: left - 
+    //drawTriangle3DUVNormal([0,0,0,   0, 0, 1,  1, 0, 1], [0,0,  0,1,  1,1], [0,-1,0,  0,-1,0,  0,-1,0]);
+
+    //Draw: left - GOOD
     gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
-
     drawTriangle3DUVNormal([0,0,0, 0,0,1, 0,1,1], [0,0, 1,0, 1,1], [-1,0,0,  -1,0,0,  -1,0,0]);
     drawTriangle3DUVNormal([0,0,0, 0,1,1, 0,1,0],[0,0, 1,1, 0,1], [-1,0,0,  -1,0,0,  -1,0,0]);
 
