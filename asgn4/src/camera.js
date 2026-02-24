@@ -99,4 +99,24 @@ class Camera{
         this.updateView();
     }
 
+    moveDown(speed = 0.2){
+        let down = new Vector3([0, -1, 0]);
+        down.mul(speed);
+
+        this.eye.add(down);
+        this.at.add(down);
+
+        this.updateView();
+    }
+
+    moveUp(speed = 0.2){
+        let up = new Vector3([0, 1, 0]);
+        up.mul(speed);
+
+        this.eye.add(up);
+        this.at.add(up);
+
+        this.updateView();
+    }
+
 }//end camera class

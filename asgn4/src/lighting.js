@@ -454,7 +454,11 @@ function keydown(ev){
     addBlock();
   } else if (ev.keyCode == 48 || ev.keyCode == 96) {    //if 0, remove block
     removeBlock();
-  }  
+  } else if (ev.keyCode == 40) {  //if down arrow key move down
+    newCam.moveDown();
+  } else if (ev.keyCode == 38) {  //if up arrow key move up
+    newCam.moveUp();
+  }
   renderScene();
   console.log(ev.keyCode);
 }
@@ -565,7 +569,7 @@ function renderScene(){
   skyCube = new Cube();
   skyCube.color = [0.8, 0.8, 0.8, 1.0];
   if (g_normalOn) skyCube.textureNum = -3;
-  skyCube.matrix.scale(-5,-5,-5);
+  skyCube.matrix.scale(-7,-7,-7);
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
   skyCube.render();
 
@@ -579,7 +583,8 @@ function renderScene(){
   
   var testCube = new Cube();
   if (g_normalOn) testCube.textureNum = -3;
-  testCube.matrix.translate(-3, 0, 0);
+  testCube.matrix.translate(0, -3, 0);
+  testCube.matrix.scale(2, 2, 2);
   testCube.render();
 
   /*
