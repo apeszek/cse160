@@ -55,6 +55,7 @@ let canvas;
 let gl;
 let a_Position;
 let a_UV;
+let a_Normal;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
@@ -326,10 +327,12 @@ function main() {
   //calls HTML action function
   actionsforHTML();
 
+  /*
     //sky implementation
   skyCube = new Cube();
   skyCube.color = [1.0, 1.0, 1.0, 1.0];
   skyCube.textureNum = 0;
+  if (g_normalOn) skyCube.textureNum = -3;
   skyCube.matrix.scale(100,100,100);
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
   
@@ -337,6 +340,7 @@ function main() {
   groundCube = new Cube();
   groundCube.color = [0.4, 0.7, 0.0, 1.0];
   groundCube.textureNum = -2;
+  if (g_normalOn) groundCube.textureNum = -3;
   groundCube.matrix.translate(0, -1, 0.0);
   groundCube.matrix.scale(worldSize, 0.01, worldSize);
   groundCube.matrix.translate(-0.5, 0, -0.5);
@@ -344,6 +348,7 @@ function main() {
   createMap();
 
   buildWorld();
+  */
 
   newCam = new Camera(canvas);
 
@@ -360,7 +365,7 @@ function main() {
   initTextures(gl,1);
 
   // Specify the color for clearing <canvas>
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  //gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
   requestAnimationFrame(tick);
 }
@@ -551,18 +556,33 @@ function renderScene(){
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   //renders the sky and ground (in main)
-  skyCube.render();
-  groundCube.render();
+  //skyCube.render();
+  //groundCube.render();
 
   //calls function to draw the map of walls
-  drawMap();
+  //drawMap();
+
+  skyCube = new Cube();
+  skyCube.color = [0.8, 0.8, 0.8, 1.0];
+  if (g_normalOn) skyCube.textureNum = -3;
+  skyCube.matrix.scale(-5,-5,-5);
+  skyCube.matrix.translate(-0.5, -0.5, -0.5);
+  skyCube.render();
+
+  groundCube = new Cube();
+  groundCube.color = [0.4, 0.7, 0.0, 1.0];
+  groundCube.textureNum = -2;
+  groundCube.matrix.translate(0, -2.49, 0.0);
+  groundCube.matrix.scale(10, 0, 10);
+  groundCube.matrix.translate(-0.5, 0, -0.5);
+  groundCube.render();
+  
+  var testCube = new Cube();
+  if (g_normalOn) testCube.textureNum = -3;
+  testCube.matrix.translate(-3, 0, 0);
+  testCube.render();
 
   /*
-  var testCube = new Cube();
-  testCube.textureNum = 1;
-  testCube.matrix.translate(-3, 0, 0);
-  //testCube.render();
-
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];

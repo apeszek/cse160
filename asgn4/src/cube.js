@@ -18,37 +18,37 @@ class Cube {
     //Pass matrix to matrix attribute
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
 
-    // Draw: front - GOOD - MINECRAFT
-    drawTriangle3DUV( [ 0,0,0,  1,1,0,  1,0,0], [0,0,  1,1,  1,0]); //new function
-    drawTriangle3DUV([0, 0, 0,  0, 1, 0,  1, 1, 0], [0,0, 0, 1,  1,1]);
+    // Draw: front - 
+    drawTriangle3DUVNormal([ 0,0,0,  1,1,0,  1,0,0], [0,0,  1,1,  1,0], [0,0,-1,   0,0,-1,   0,0,-1]); //new function
+    drawTriangle3DUVNormal([0, 0, 0,  0, 1, 0,  1, 1, 0], [0,0, 0, 1,  1,1], [0,0,-1,  0,0,-1,  0,0,-1]);
     
-    //Draw: right - GOOD -  
+    //Draw: right -
     gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
-    drawTriangle3DUV([1,0,0,   1, 1, 0,  1, 1, 1], [0,0, 0,1, 1,1]); 
-    drawTriangle3DUV([1,0,0,   1, 1, 1,  1, 0, 1], [0,0, 1,1, 1,0]); 
+    drawTriangle3DUVNormal([1,0,0,   1, 1, 0,  1, 1, 1], [0,0, 0,1, 1,1], [1,0,0,  1,0,0,  1,0,0]); 
+    drawTriangle3DUVNormal([1,0,0,   1, 1, 1,  1, 0, 1], [0,0, 1,1, 1,0], [1,0,0,  1,0,0,  1,0,0]); 
     
-    //Draw: top - GOOD
+    //Draw: top - 
     //pass the color of a point to u_FragColor uniform variable
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
-    drawTriangle3DUV([0,1,0,   1, 1, 1,  0, 1, 1], [0,0, 1,1, 0,1]);
-    drawTriangle3DUV([0,1,0,   1, 1, 0,  1, 1, 1], [0,0, 1,0, 1,1]);
+    drawTriangle3DUVNormal([0,1,0,   1, 1, 1,  0, 1, 1], [0,0, 1,1, 0,1], [0,1,0,  0,1,0,  0,1,0]);
+    drawTriangle3DUVNormal([0,1,0,   1, 1, 0,  1, 1, 1], [0,0, 1,0, 1,1], [0,1,0,  0,1,0,  0,1,0]);
 
-    //Draw: back - GOOD - MINECRAFT
+    //Draw: back - 
     //pass the color of a point to u_FragColor uniform variable
     gl.uniform4f(u_FragColor, rgba[0]*.9, rgba[1]*.9, rgba[2]*.9, rgba[3]);
-    drawTriangle3DUV([0,0,1, 1,1,1, 1,0,1], [0,0, 1,1, 1,0]);
-    drawTriangle3DUV([0,0,1, 0,1,1, 1,1,1], [0,0, 0,1, 1,1]);
+    drawTriangle3DUVNormal([0,0,1, 1,1,1, 1,0,1], [0,0, 1,1, 1,0], [0,0,1,  0,0,1,  0,0,1]);
+    drawTriangle3DUVNormal([0,0,1, 0,1,1, 1,1,1], [0,0, 0,1, 1,1], [0,0,1,  0,0,1,  0,0,1]);
 
-    //Draw: bottom - GOOD
+    //Draw: bottom - NEED TO FIX UVS
     gl.uniform4f(u_FragColor, rgba[0]*.95, rgba[1]*.95, rgba[2]*.95, rgba[3]);
-    drawTriangle3D([0,0,0,   1, 0, 1,  1, 0, 0]);
-    drawTriangle3D([1,0,1,   0, 0, 1,  0, 0, 0]);
+    drawTriangle3DUVNormal([0,0,0,   0, 0, 1,  1, 0, 1], [0,0,  1,1,  1,0], [0,-1,0,  0,-1,0,  0,-1,0]);
+    drawTriangle3DUVNormal([0,0,0,   0, 0, 1,  1, 0, 1], [0,0,  0,1,  1,1], [0,-1,0,  0,-1,0,  0,-1,0]);
 
-    //Draw: left - GOOD - MINECRAFT
+    //Draw: left - 
     gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
 
-    drawTriangle3DUV([0,0,0, 0,0,1, 0,1,1], [0,0, 1,0, 1,1]);
-    drawTriangle3DUV([0,0,0, 0,1,1, 0,1,0],[0,0, 1,1, 0,1]);
+    drawTriangle3DUVNormal([0,0,0, 0,0,1, 0,1,1], [0,0, 1,0, 1,1], [-1,0,0,  -1,0,0,  -1,0,0]);
+    drawTriangle3DUVNormal([0,0,0, 0,1,1, 0,1,0],[0,0, 1,1, 0,1], [-1,0,0,  -1,0,0,  -1,0,0]);
 
   } // end render 
 
