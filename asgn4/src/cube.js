@@ -5,6 +5,7 @@ class Cube {
     this.color = [1.0, 1.0, 1.0, 1.0];
     this.matrix = new Matrix4();
     this.textureNum = -1;
+    this.cube
   }
   render() {
     var rgba = this.color;  
