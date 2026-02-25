@@ -583,8 +583,8 @@ function renderScene(){
   
   var testCube = new Cube();
   if (g_normalOn) testCube.textureNum = -3;
-  testCube.matrix.translate(0, -3, 0);
-  testCube.matrix.scale(2, 2, 2);
+  testCube.matrix.translate(-1, -2, 0);
+  testCube.matrix.scale(1.5, 1.5, 1.5);
   testCube.render();
 
   /*

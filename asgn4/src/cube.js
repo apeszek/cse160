@@ -39,12 +39,10 @@ class Cube {
     drawTriangle3DUVNormal([0,0,1, 1,1,1, 1,0,1], [0,0, 1,1, 1,0], [0,0,1,  0,0,1,  0,0,1]);
     drawTriangle3DUVNormal([0,0,1, 0,1,1, 1,1,1], [0,0, 0,1, 1,1], [0,0,1,  0,0,1,  0,0,1]);
 
-    //Draw: top - 
+    //Draw: top - GOOD
     gl.uniform4f(u_FragColor, rgba[0]*.95, rgba[1]*.95, rgba[2]*.95, rgba[3]);
     drawTriangle3DUVNormal([0,0,0,   0, 0, 1,  1, 0, 1], [0,0,  1,1,  1,0], [0,-1,0,  0,-1,0,  0,-1,0]);
     drawTriangle3DUVNormal([0,0,0,   1, 0, 1,  1, 0, 0], [0,0,  1,0,  0,1], [0,-1,0,  0,-1,0,  0,-1,0]);
-
-    //drawTriangle3DUVNormal([0,0,0,   0, 0, 1,  1, 0, 1], [0,0,  0,1,  1,1], [0,-1,0,  0,-1,0,  0,-1,0]);
 
     //Draw: left - GOOD
     gl.uniform4f(u_FragColor, rgba[0]*.97, rgba[1]*.97, rgba[2]*.97, rgba[3]);
