@@ -9,6 +9,7 @@ var VSHADER_SOURCE = `
   attribute vec3 a_Normal;
   varying vec2 v_UV;
   varying vec3 v_Normal;
+  varying vec4 v_VertPos;
   uniform mat4 u_ModelMatrix;
   uniform mat4 u_GlobalRotateMatrix;
   uniform mat4 u_ViewMatrix;
@@ -17,6 +18,7 @@ var VSHADER_SOURCE = `
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
     v_UV = a_UV;
     v_Normal = a_Normal;
+    v_VertPos = u_ModelMatrix * a_Position;
   }`
 
 // Fragment shader program
@@ -29,6 +31,7 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   uniform vec3 u_lightPos;
+  varying vec4 v_VertPos;
   void main() {
     if (u_whichTexture == -3){                    // use normal
       gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);
@@ -49,6 +52,14 @@ var FSHADER_SOURCE = `
       gl_FragColor = vec4(1, .2, .2, 1);
     }
     
+    vec3 lightVector = vec3(v_VertPos)-u_lightPos;
+    float r=length(lightVector);
+    if (r <1.0){
+    gl_FragColor = vec4(1,0,0,1);
+    } else if (r < 2.0) {
+     gl_FragColor = vec4(0,1,0,1);
+    }
+
   }`
 
 // GLOBAL VARIABLES
