@@ -420,7 +420,6 @@ function mouseMove(ev){
 //tick function
 function tick(){
   g_seconds = performance.now()/1000.0;
-  //console.log(g_seconds);
 
   updateAnimationAngles();
 
@@ -433,6 +432,8 @@ function updateAnimationAngles() {
   if (g_animation) {
     g_legMove = (30*Math.sin(g_seconds));
   }
+  //update lighting
+  g_lightPos[0] = Math.cos(g_seconds);
 }
 
 /*
