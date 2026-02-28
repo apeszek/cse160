@@ -28,6 +28,7 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler0;
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
+  uniform vec3 u_lightPos;
   void main() {
     if (u_whichTexture == -3){                    // use normal
       gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);
@@ -65,6 +66,7 @@ let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_Sampler1;
 let u_whichTexture;
+let u_lightPos;
 
 //CONST FOR SHAPES
 const POINT = 0;
@@ -94,19 +96,22 @@ let g_normalOn = false;
 var g_startTime = performance.now()/1000.0;
 var g_seconds = performance.now()/1000.0-g_startTime;
 
-//CAMERA + MAP VARIABLES
+//CAMERA VARIABLES
 let newCam;
 let g_mouseLastX = null;
 let g_mouseLastY = null;
 let g_mouseSensitivity = 0.3;
 let g_mouseDown = false;
 
+//MAP VARIABLES
 let g_map = [];
 let worldSize = 32;
 let worldBlocks = [];
-
 let skyCube;
 let groundCube;
+
+//LIGHT VARIABLES 
+let g_lightPos = [0,1,-2];
 
 //creates the array for the map
 function createMap(){
@@ -232,6 +237,13 @@ function connectVariablesToGLSL(){
     return;
   }
 
+  //get the storage location of u_lightPos
+  u_lightPos = gl.getUniformLocation(gl.program, "u_lightPos");
+  if (!u_lightPos){
+    console.log("Failed to get the storage location of u_lightPos");
+    return;
+  }
+
   //set up initival value for matrix to identify
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
@@ -244,6 +256,11 @@ function actionsforHTML(){
   document.getElementById('normalOn').onclick = function() {g_normalOn = true;};
   document.getElementById('normalOff').onclick = function() {g_normalOn = false;};
 
+  //Sliders - Lights
+  document.getElementById('lightSlideX').addEventListener('mousemove', function(ev) {if (ev.buttons ==1) {g_lightPos[0] = this.value/100; renderScene();}});
+  document.getElementById('lightSlideY').addEventListener('mousemove', function(ev) {if (ev.buttons ==1) {g_lightPos[1] = this.value/100; renderScene();}});
+  document.getElementById('lightSlideZ').addEventListener('mousemove', function(ev) {if (ev.buttons ==1) {g_lightPos[2] = this.value/100; renderScene();}});
+  
   //Buttons - Animation on/off
   document.getElementById('animateLegMovementOn').onclick = function() {g_animation = true;};
   document.getElementById('animateLegMovementOff').onclick = function() {g_animation = false;};
@@ -255,7 +272,6 @@ function actionsforHTML(){
   document.getElementById('furTail').addEventListener('mousemove',function() {g_furTail = this.value; renderScene();});
 
   //Slider - Angle
-  //document.getElementById('angleSlide').addEventListener('mouseup', function(){g_globalAngle = this.value; renderAllShapes(); });
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
 }
 
@@ -566,6 +582,17 @@ function renderScene(){
   //calls function to draw the map of walls
   //drawMap();
 
+  //light
+  gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  var light = new Cube();
+  light.color = [2,2,0,1];
+  light.textureNum =-2;
+  light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  light.matrix.scale(0.1,0.1,0.1);
+  light.matrix.translate(-0.5,-0.5,-0.5);
+  light.render();
+
+  //sky
   skyCube = new Cube();
   skyCube.color = [0.8, 0.8, 0.8, 1.0];
   if (g_normalOn) skyCube.textureNum = -3;
@@ -573,6 +600,7 @@ function renderScene(){
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
   skyCube.render();
 
+  //ground
   groundCube = new Cube();
   groundCube.color = [0.4, 0.7, 0.0, 1.0];
   groundCube.textureNum = -2;
@@ -581,12 +609,14 @@ function renderScene(){
   groundCube.matrix.translate(-0.5, 0, -0.5);
   groundCube.render();
   
+  //test cube
   var testCube = new Cube();
   if (g_normalOn) testCube.textureNum = -3;
   testCube.matrix.translate(-1, -2, 0);
   testCube.matrix.scale(1.5, 1.5, 1.5);
   testCube.render();
 
+  //test sphere
   var testSphere = new Sphere();
   if (g_normalOn) testSphere.textureNum = -3;
   testSphere.matrix.translate(0,0, 0);

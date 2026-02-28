@@ -3,7 +3,7 @@
   <head>
     <link rel="icon" href="data:,">
     <meta charset="utf-8" />
-    <title>CSE160 Assignment 3: Virutal World</title>
+    <title>CSE160 Assignment 4: Lighting</title>
   </head>
 
   <body onload="main()">
@@ -12,9 +12,13 @@
     </canvas>
     <p id="numdot"> XXX </p>
     <br>
-    Test Normals:
     <button type = "button" id = "normalOn">Normal ON</button>
     <button type = "button" id = "normalOff">Normal OFF</button>
+    <br>
+    <br>
+    Light X <input type="range" min="-250" max="250" value="0" class="slider" id="lightSlideX">
+    Light Y <input type="range" min="-250" max="250" value="0" class="slider" id="lightSlideY">
+    Light Z <input type="range" min="-250" max="250" value="0" class="slider" id="lightSlideZ">
     <br>
     <br>
     <b>Key Controls:</b> <br>
