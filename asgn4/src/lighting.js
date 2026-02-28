@@ -589,10 +589,10 @@ function renderScene(){
 
   var testSphere = new Sphere();
   if (g_normalOn) testSphere.textureNum = -3;
-  testSphere.matrix.translate(0,-2, 0);
+  testSphere.matrix.translate(0,0, 0);
   testSphere.matrix.scale(1.5, 1.5, 1.5);
   testSphere.render();
-  
+
   /*
   //draws the body - cylinder
   var body = new cylinder();

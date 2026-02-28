@@ -5,7 +5,34 @@ class Cube {
     this.color = [1.0, 1.0, 1.0, 1.0];
     this.matrix = new Matrix4();
     this.textureNum = -1;
-    this.cube
+    this.cubeVerts32 = new Float32Array([
+      0,0,0,  1,1,0,  1,0,0,
+      0,0,0,  0,1,0,  1,1,0,
+      0,1,1,  0,1,1,  1,1,1,
+      0,1,0,  1,1,1,  1,1,0,
+      1,1,0,  1,1,1,  1,0,0,
+      1,0,0,  1,1,1,  1,0,1,
+      0,1,0,  0,1,1,  0,0,0,
+      0,0,0,  0,1,1,  0,0,1,
+      0,0,0,  0,0,1,  1,0,1,
+      0,0,0,  1,0,1,  1,0,0,
+      0,0,1,  1,1,1,  1,0,1,
+      0,0,1,  0,1,1,  1,1,1,
+    ]);
+    this.cubeVerts = [
+      0,0,0,  1,1,0,  1,0,0,
+      0,0,0,  0,1,0,  1,1,0,
+      0,1,0,  0,1,1,  1,1,1,
+      0,1,0,  1,1,1,  1,1,0,
+      1,1,0,  1,1,1,  1,0,0,
+      1,0,0,  1,1,1,  1,0,1,
+      0,1,0,  0,1,1,  0,0,0,
+      0,0,0,  0,1,1,  0,0,1,
+      0,0,0,  0,0,1,  1,0,1,
+      0,0,0,  1,0,1,  1,0,0,
+      0,0,1,  1,1,1,  1,0,1,
+      0,0,1,  0,1,1,  1,1,1
+    ];
   }
   render() {
     var rgba = this.color;  
@@ -51,6 +78,35 @@ class Cube {
     drawTriangle3DUVNormal([0,0,0, 0,1,1, 0,1,0],[0,0, 1,1, 0,1], [-1,0,0,  -1,0,0,  -1,0,0]);
 
   } // end render 
+  
+  renderFast() {
+    var rgba = this.color;
 
+    gl.uniform1i(u_whichTexture, -2);
+
+    gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
+
+    gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
+
+    var allVerts = [];
+
+    //front
+    allVerts = allVerts.concat([0,0,0,  1,1,0,  1,0,0]);
+    allVerts = allVerts.concat([0,0,0,  0,1,0,  1,1,0]);
+
+    //top
+    allVerts = allVerts.concat([0,1,0,  0,1,1,  1,1,1]);
+    allVerts = allVerts.concat([0,1,0,  1,1,1,  1,1,0]);
+
+    //right
+    allVerts = allVerts.concat([1,1,0,  0,1,1,  1,0,0]);
+    allVerts = allVerts.concat([1,0,0,  1,1,1,  1,0,1]);
+
+    //left
+    allVerts = allVerts.concat([0,1,0,  0,1,1,  0,0,0]);
+    allVerts = allVerts.concat([0,0,0,  0,1,1,  0,0,1]);
+
+
+  }
 
 } // end cube class
