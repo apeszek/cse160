@@ -31,6 +31,7 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   uniform vec3 u_lightPos;
+  uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
   void main() {
     if (u_whichTexture == -3){                    // use normal
@@ -70,12 +71,23 @@ var FSHADER_SOURCE = `
     vec3 N = normalize(v_Normal);
     float nDotL = max(dot(N, L), 0.0);
 
-    vec3 diffuse = vec3(gl_FragColor) * nDotL;
-    vec3 ambient = vec3(gl_FragColor) * 0.3;
-    gl_FragColor = vec4(diffuse+ambient, 1.0);
-    //gl_FragColor = gl_FragColor * nDotL;
-    //gl_FragColor = 2.0;
+    //reflection
+    vec3 R = reflect(-L, N);
 
+    //eye
+    vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
+
+    //specular
+    float specular = pow(max(dot(E,R), 0.0), 5.0);
+    
+    //diffuse
+    vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
+
+    //ambient
+    vec3 ambient = vec3(gl_FragColor) * 0.3;
+
+    //final light
+    gl_FragColor = vec4(specular+diffuse+ambient, 1.0);
   }`
 
 // GLOBAL VARIABLES
@@ -94,6 +106,7 @@ let u_Sampler0;
 let u_Sampler1;
 let u_whichTexture;
 let u_lightPos;
+let u_cameraPos;
 
 //CONST FOR SHAPES
 const POINT = 0;
@@ -268,6 +281,13 @@ function connectVariablesToGLSL(){
   u_lightPos = gl.getUniformLocation(gl.program, "u_lightPos");
   if (!u_lightPos){
     console.log("Failed to get the storage location of u_lightPos");
+    return;
+  }
+
+  //get the storage location of u_cameraPos
+  u_cameraPos = gl.getUniformLocation(gl.program, "u_cameraPos");
+  if (!u_cameraPos){
+    console.log("Failed to get the storage location of u_cameraPos");
     return;
   }
 
@@ -449,7 +469,7 @@ function updateAnimationAngles() {
     g_legMove = (30*Math.sin(g_seconds));
   }
   //update lighting
-  g_lightPos[0] = Math.cos(g_seconds);
+  //g_lightPos[0] = Math.cos(g_seconds);
 }
 
 /*
@@ -610,13 +630,18 @@ function renderScene(){
   //calls function to draw the map of walls
   //drawMap();
 
-  //light
+  //pass the light position to GLSL
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+
+  //pass the camera positon to GLSL
+  gl.uniform3f(u_cameraPos, newCam.eye.x, newCam.eye.y, newCam.eye.z); 
+
+  //light
   var light = new Cube();
   light.color = [2,2,0,1];
   light.textureNum =-2;
   light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  light.matrix.scale(0.1,0.1,0.1);
+  light.matrix.scale(-0.1,-0.1,-0.1);
   light.matrix.translate(-0.5,-0.5,-0.5);
   light.render();
 
