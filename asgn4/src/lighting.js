@@ -33,6 +33,7 @@ var FSHADER_SOURCE = `
   uniform vec3 u_lightPos;
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
+  uniform bool u_lightOn;
   void main() {
     if (u_whichTexture == -3){                    // use normal
       gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);
@@ -78,16 +79,22 @@ var FSHADER_SOURCE = `
     vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
 
     //specular
-    float specular = pow(max(dot(E,R), 0.0), 5.0);
+    float specular = pow(max(dot(E,R), 0.0), 20.0);
     
     //diffuse
-    vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
+    vec3 diffuse = vec3(1.0,1.0,0.9) * vec3(gl_FragColor) * nDotL * 0.7;
 
     //ambient
-    vec3 ambient = vec3(gl_FragColor) * 0.3;
+    vec3 ambient = vec3(gl_FragColor) * 0.2;
 
     //final light
-    gl_FragColor = vec4(specular+diffuse+ambient, 1.0);
+    if (u_lightOn){
+      if (u_whichTexture == 0){
+        gl_FragColor = vec4(specular+diffuse+ambient, 1.0);
+      } else {
+        gl_fragColor = vec4(diffuse + ambient, 1.0);
+      }
+    } //end light on if statent
   }`
 
 // GLOBAL VARIABLES
@@ -107,6 +114,7 @@ let u_Sampler1;
 let u_whichTexture;
 let u_lightPos;
 let u_cameraPos;
+let u_lightOn;
 
 //CONST FOR SHAPES
 const POINT = 0;
@@ -152,6 +160,7 @@ let groundCube;
 
 //LIGHT VARIABLES 
 let g_lightPos = [0,1,-2];
+let g_lightOn = true;
 
 //creates the array for the map
 function createMap(){
@@ -284,6 +293,13 @@ function connectVariablesToGLSL(){
     return;
   }
 
+  //get the storage location of u_lightOn
+  u_lightOn = gl.getUniformLocation(gl.program, "u_lightON");
+  if (!u_lightOn){
+    console.log("Failed to get the storage location of u_lightOn");
+    return;
+  }
+
   //get the storage location of u_cameraPos
   u_cameraPos = gl.getUniformLocation(gl.program, "u_cameraPos");
   if (!u_cameraPos){
@@ -299,6 +315,10 @@ function connectVariablesToGLSL(){
 
 //Actions for HTML UI Elements
 function actionsforHTML(){
+  //Buttons - Light on/off
+  document.getElementById('lightOn').onclick = function() {g_lightOn = true;};
+  document.getElementById('lightOff').onclick = function() {g_lightOn = false;};
+
   //Buttons - Normal on/off
   document.getElementById('normalOn').onclick = function() {g_normalOn = true;};
   document.getElementById('normalOff').onclick = function() {g_normalOn = false;};
@@ -636,6 +656,8 @@ function renderScene(){
   //pass the camera positon to GLSL
   gl.uniform3f(u_cameraPos, newCam.eye.x, newCam.eye.y, newCam.eye.z); 
 
+  //pass light status
+  gl.uniform1i(u_lightOn, g_lightOn);
   //light
   var light = new Cube();
   light.color = [2,2,0,1];
