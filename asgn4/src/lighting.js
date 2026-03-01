@@ -52,13 +52,29 @@ var FSHADER_SOURCE = `
       gl_FragColor = vec4(1, .2, .2, 1);
     }
     
-    vec3 lightVector = vec3(v_VertPos)-u_lightPos;
-    float r=length(lightVector);
-    if (r <1.0){
-    gl_FragColor = vec4(1,0,0,1);
-    } else if (r < 2.0) {
-     gl_FragColor = vec4(0,1,0,1);
-    }
+    vec3 lightVector = u_lightPos - vec3(v_VertPos);
+    float r = length(lightVector);
+
+    // Red/Green Dist. Visualization
+    //if (r <1.0){
+    //gl_FragColor = vec4(1,0,0,1);
+    //} else if (r < 2.0) {
+    //gl_FragColor = vec4(0,1,0,1);
+    //}
+
+    //Light Falloff Visualization
+    //gl_FragColor = vec4(vec3(gl_FragColor)/(r*r),1);
+
+    //N dot L
+    vec3 L = normalize(lightVector);
+    vec3 N = normalize(v_Normal);
+    float nDotL = max(dot(N, L), 0.0);
+
+    vec3 diffuse = vec3(gl_FragColor) * nDotL;
+    vec3 ambient = vec3(gl_FragColor) * 0.3;
+    gl_FragColor = vec4(diffuse+ambient, 1.0);
+    //gl_FragColor = gl_FragColor * nDotL;
+    //gl_FragColor = 2.0;
 
   }`
 
