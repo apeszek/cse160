@@ -79,7 +79,7 @@ var FSHADER_SOURCE = `
     vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
 
     //specular
-    float specular = pow(max(dot(E,R), 0.0), 20.0);
+    float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
     
     //diffuse
     vec3 diffuse = vec3(1.0,1.0,0.9) * vec3(gl_FragColor) * nDotL * 0.7;
@@ -92,7 +92,7 @@ var FSHADER_SOURCE = `
       if (u_whichTexture == 0){
         gl_FragColor = vec4(specular+diffuse+ambient, 1.0);
       } else {
-        gl_fragColor = vec4(diffuse + ambient, 1.0);
+        gl_FragColor = vec4(diffuse + ambient, 1.0);
       }
     } //end light on if statent
   }`
@@ -294,7 +294,7 @@ function connectVariablesToGLSL(){
   }
 
   //get the storage location of u_lightOn
-  u_lightOn = gl.getUniformLocation(gl.program, "u_lightON");
+  u_lightOn = gl.getUniformLocation(gl.program, "u_lightOn");
   if (!u_lightOn){
     console.log("Failed to get the storage location of u_lightOn");
     return;
@@ -328,6 +328,7 @@ function actionsforHTML(){
   document.getElementById('lightSlideY').addEventListener('mousemove', function(ev) {if (ev.buttons ==1) {g_lightPos[1] = this.value/100; renderScene();}});
   document.getElementById('lightSlideZ').addEventListener('mousemove', function(ev) {if (ev.buttons ==1) {g_lightPos[2] = this.value/100; renderScene();}});
   
+  /*
   //Buttons - Animation on/off
   document.getElementById('animateLegMovementOn').onclick = function() {g_animation = true;};
   document.getElementById('animateLegMovementOff').onclick = function() {g_animation = false;};
@@ -340,6 +341,7 @@ function actionsforHTML(){
 
   //Slider - Angle
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
+  */
 }
 
 function initTextures(gl, textureNum){
@@ -410,7 +412,7 @@ function main() {
   //calls HTML action function
   actionsforHTML();
 
-  /*
+  
     //sky implementation
   skyCube = new Cube();
   skyCube.color = [1.0, 1.0, 1.0, 1.0];
@@ -431,7 +433,7 @@ function main() {
   createMap();
 
   buildWorld();
-  */
+  
 
   newCam = new Camera(canvas);
 
@@ -489,7 +491,7 @@ function updateAnimationAngles() {
     g_legMove = (30*Math.sin(g_seconds));
   }
   //update lighting
-  //g_lightPos[0] = Math.cos(g_seconds);
+  g_lightPos[0] = Math.cos(g_seconds);
 }
 
 /*
@@ -643,21 +645,21 @@ function renderScene(){
   gl.enable(gl.DEPTH_TEST);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  //renders the sky and ground (in main)
-  //skyCube.render();
-  //groundCube.render();
-
-  //calls function to draw the map of walls
-  //drawMap();
-
   //pass the light position to GLSL
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
 
-  //pass the camera positon to GLSL
-  gl.uniform3f(u_cameraPos, newCam.eye.x, newCam.eye.y, newCam.eye.z); 
+  //pass the camera position to GLSL
+  gl.uniform3f(u_cameraPos, newCam.eye.elements[0], newCam.eye.elements[1], newCam.eye.elements[2]);
 
   //pass light status
   gl.uniform1i(u_lightOn, g_lightOn);
+
+  //renders the sky and ground (in main)
+  skyCube.render();
+  groundCube.render();
+
+  //calls function to draw the map of walls
+  drawMap();
   //light
   var light = new Cube();
   light.color = [2,2,0,1];
@@ -667,13 +669,14 @@ function renderScene(){
   light.matrix.translate(-0.5,-0.5,-0.5);
   light.render();
 
+  /*
   //sky
   skyCube = new Cube();
   skyCube.color = [0.8, 0.8, 0.8, 1.0];
   if (g_normalOn) skyCube.textureNum = -3;
   skyCube.matrix.scale(-7,-7,-7);
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
-  skyCube.render();
+  //skyCube.render();
 
   //ground
   groundCube = new Cube();
@@ -682,7 +685,9 @@ function renderScene(){
   groundCube.matrix.translate(0, -2.49, 0.0);
   groundCube.matrix.scale(10, 0, 10);
   groundCube.matrix.translate(-0.5, 0, -0.5);
-  groundCube.render();
+  //groundCube.render();
+
+  */
   
   //test cube
   var testCube = new Cube();
