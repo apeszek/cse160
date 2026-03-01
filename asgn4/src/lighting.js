@@ -412,7 +412,7 @@ function main() {
   //calls HTML action function
   actionsforHTML();
 
-  
+  /*
     //sky implementation
   skyCube = new Cube();
   skyCube.color = [1.0, 1.0, 1.0, 1.0];
@@ -430,10 +430,12 @@ function main() {
   groundCube.matrix.scale(worldSize, 0.01, worldSize);
   groundCube.matrix.translate(-0.5, 0, -0.5);
 
+
   createMap();
 
   buildWorld();
   
+  */
 
   newCam = new Camera(canvas);
 
@@ -654,12 +656,15 @@ function renderScene(){
   //pass light status
   gl.uniform1i(u_lightOn, g_lightOn);
 
+  /*
   //renders the sky and ground (in main)
   skyCube.render();
   groundCube.render();
 
   //calls function to draw the map of walls
   drawMap();
+*/
+
   //light
   var light = new Cube();
   light.color = [2,2,0,1];
@@ -669,14 +674,13 @@ function renderScene(){
   light.matrix.translate(-0.5,-0.5,-0.5);
   light.render();
 
-  /*
   //sky
   skyCube = new Cube();
   skyCube.color = [0.8, 0.8, 0.8, 1.0];
   if (g_normalOn) skyCube.textureNum = -3;
   skyCube.matrix.scale(-7,-7,-7);
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
-  //skyCube.render();
+  skyCube.render();
 
   //ground
   groundCube = new Cube();
@@ -685,9 +689,8 @@ function renderScene(){
   groundCube.matrix.translate(0, -2.49, 0.0);
   groundCube.matrix.scale(10, 0, 10);
   groundCube.matrix.translate(-0.5, 0, -0.5);
-  //groundCube.render();
+  groundCube.render();
 
-  */
   
   //test cube
   var testCube = new Cube();
