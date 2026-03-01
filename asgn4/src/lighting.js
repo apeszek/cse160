@@ -31,6 +31,7 @@ var FSHADER_SOURCE = `
   uniform sampler2D u_Sampler1;
   uniform int u_whichTexture;
   uniform vec3 u_lightPos;
+  uniform vec3 u_lightColor;
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
   uniform bool u_lightOn;
@@ -82,7 +83,7 @@ var FSHADER_SOURCE = `
     float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
     
     //diffuse
-    vec3 diffuse = vec3(1.0,1.0,0.9) * vec3(gl_FragColor) * nDotL * 0.7;
+    vec3 diffuse = u_lightColor * vec3(gl_FragColor) * nDotL * 0.7;
 
     //ambient
     vec3 ambient = vec3(gl_FragColor) * 0.2;
@@ -158,10 +159,12 @@ let worldBlocks = [];
 let skyCube;
 let groundCube;
 
-//LIGHT VARIABLES 
+//LIGHT VARIABLES
 let g_lightPos = [0,1,-2];
 let g_lightOn = true;
 let g_lightAngleOffset = 0;
+let g_lightColor = [1.0, 1.0, 1.0];
+let u_lightColor;
 
 //creates the array for the map
 function createMap(){
@@ -294,6 +297,13 @@ function connectVariablesToGLSL(){
     return;
   }
 
+  //get the storage location of u_lightColor
+  u_lightColor = gl.getUniformLocation(gl.program, "u_lightColor");
+  if (!u_lightColor){
+    console.log("Failed to get the storage location of u_lightColor");
+    return;
+  }
+
   //get the storage location of u_lightOn
   u_lightOn = gl.getUniformLocation(gl.program, "u_lightOn");
   if (!u_lightOn){
@@ -333,6 +343,11 @@ function actionsforHTML(){
     g_lightAngleOffset = this.value * Math.PI / 180;
     renderScene();
   });
+
+  //Sliders - Light Color
+  document.getElementById('lightColorR').addEventListener('mousemove', function(ev) {if (ev.buttons==1) {g_lightColor[0] = this.value/100; renderScene();}});
+  document.getElementById('lightColorG').addEventListener('mousemove', function(ev) {if (ev.buttons==1) {g_lightColor[1] = this.value/100; renderScene();}});
+  document.getElementById('lightColorB').addEventListener('mousemove', function(ev) {if (ev.buttons==1) {g_lightColor[2] = this.value/100; renderScene();}});
 
 
 
@@ -657,6 +672,9 @@ function renderScene(){
 
   //pass the light position to GLSL
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+
+  //pass the light color to GLSL
+  gl.uniform3f(u_lightColor, g_lightColor[0], g_lightColor[1], g_lightColor[2]);
 
   //pass the camera position to GLSL
   gl.uniform3f(u_cameraPos, newCam.eye.elements[0], newCam.eye.elements[1], newCam.eye.elements[2]);
