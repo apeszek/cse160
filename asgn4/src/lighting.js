@@ -161,6 +161,7 @@ let groundCube;
 //LIGHT VARIABLES 
 let g_lightPos = [0,1,-2];
 let g_lightOn = true;
+let g_lightAngleOffset = 0;
 
 //creates the array for the map
 function createMap(){
@@ -328,11 +329,18 @@ function actionsforHTML(){
   document.getElementById('lightSlideY').addEventListener('mousemove', function(ev) {if (ev.buttons ==1) {g_lightPos[1] = this.value/100; renderScene();}});
   document.getElementById('lightSlideZ').addEventListener('mousemove', function(ev) {if (ev.buttons ==1) {g_lightPos[2] = this.value/100; renderScene();}});
   
-  /*
+  document.getElementById('lightSlide').addEventListener('mousemove', function(){
+    g_lightAngleOffset = this.value * Math.PI / 180;
+    renderScene();
+  });
+
+
+
   //Buttons - Animation on/off
   document.getElementById('animateLegMovementOn').onclick = function() {g_animation = true;};
   document.getElementById('animateLegMovementOff').onclick = function() {g_animation = false;};
 
+  /*
   //Slider - Tail Movement + leg movement
   document.getElementById('legMove').addEventListener('mousemove',function() {g_legMove = this.value; renderScene();});
   document.getElementById('baseTailMove').addEventListener('mousemove',function() {g_baseTailMove = this.value; renderScene();});
@@ -493,7 +501,7 @@ function updateAnimationAngles() {
     g_legMove = (30*Math.sin(g_seconds));
   }
   //update lighting
-  g_lightPos[0] = Math.cos(g_seconds);
+    g_lightPos[0] = Math.cos(g_seconds * 0.3 + g_lightAngleOffset);
 }
 
 /*
