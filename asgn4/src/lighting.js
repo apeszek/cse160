@@ -352,7 +352,6 @@ function actionsforHTML(){
   document.getElementById('lightColorG').addEventListener('mousemove', function(ev) {if (ev.buttons==1) {g_lightColor[1] = this.value/100; renderScene();}});
   document.getElementById('lightColorB').addEventListener('mousemove', function(ev) {if (ev.buttons==1) {g_lightColor[2] = this.value/100; renderScene();}});
 
-  /*
   //Buttons - Animation on/off
   document.getElementById('animateLegMovementOn').onclick = function() {g_animation = true;};
   document.getElementById('animateLegMovementOff').onclick = function() {g_animation = false;};
@@ -365,7 +364,7 @@ function actionsforHTML(){
 
   //Slider - Angle
   document.getElementById('angleSlide').addEventListener('mousemove', function(){g_globalAngle = this.value; renderScene(); });
-  */
+
 }
 
 function initTextures(gl, textureNum){
@@ -730,6 +729,7 @@ function renderScene(){
 
   //obj hamster implementation
   hamster.color = [0.3, 0.5, 0.5, 1.0];
+  hamster.textureNum = -1;
   if (g_normalOn) hamster.textureNum = -3;
   hamster.matrix = new Matrix4();
   hamster.matrix.translate(0, -1.3, -3);

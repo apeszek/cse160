@@ -12,7 +12,8 @@ class Model {
         this.getFileContent().then(() => {
             this.vertexBuffer = gl.createBuffer();
             this.normalBuffer = gl.createBuffer();
-            if (!this.vertexBuffer || !this.normalBuffer){
+            this.uvBuffer = gl.createBuffer();
+            if (!this.vertexBuffer || !this.normalBuffer || !this.uvBuffer){
                 console.log("Failed to create buffers for", this.filePath);
                 return;
             }
@@ -26,6 +27,7 @@ class Model {
 
         const unpackedVerts = [];
         const unpackedNormals = [];
+        const unpackedUVs = [];
 
         for (let i = 0; i < lines.length; i++){
             const line = lines[i];
@@ -52,12 +54,19 @@ class Model {
                         allNormals[normalIndex + 1],
                         allNormals[normalIndex + 2]
                     );
+
+                    // generate UVs from vertex x,z for debug color visualization
+                    unpackedUVs.push(
+                        allVertices[vertexIndex] * 0.5 + 0.5,
+                        allVertices[vertexIndex + 2] * 0.5 + 0.5
+                    );
                 }
             }
         }
         this.modelData = {
             vertices: new Float32Array(unpackedVerts),
-            normals: new Float32Array(unpackedNormals)
+            normals: new Float32Array(unpackedNormals),
+            uvs: new Float32Array(unpackedUVs)
         };
         this.isFullyLoaded = true;
         //console.log("all vertices:", allVertices);
@@ -80,8 +89,15 @@ class Model {
         gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(a_Normal);
 
-        //disable UV since model has no UV data
-        gl.disableVertexAttribArray(a_UV);
+        // UV: enable with generated coords for debug mode, otherwise disable
+        if (this.textureNum == -1) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, this.modelData.uvs, gl.DYNAMIC_DRAW);
+            gl.vertexAttribPointer(a_UV, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(a_UV);
+        } else {
+            gl.disableVertexAttribArray(a_UV);
+        }
 
         //set uniforms
         gl.uniform1i(u_whichTexture, this.textureNum);
