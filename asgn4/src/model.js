@@ -1,12 +1,13 @@
-//imported model.js file from obj lab
+// model.js file from obj lab
 
 // prettier-ignore
-export default class Model {
+class Model {
     constructor(gl, filePath) {
         this.filePath = filePath;
         this.color = [1.0, 1.0, 1.0, 1.0];
         this.matrix = new Matrix4();
         this.isFullyLoaded = false;
+        this.textureNum = -1;
 
         this.getFileContent().then(() => {
             this.vertexBuffer = gl.createBuffer();
@@ -64,29 +65,28 @@ export default class Model {
 
     }
 
-    render(gl, program) {
+    render(gl) {
         if (!this.isFullyLoaded) return;
 
         //vertices
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this.modelData.vertices, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(program.a_Position, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(program.a_Position);
+        gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(a_Position);
 
         //normals
         gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this.modelData.normals, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(program.a_Normal, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(program.a_Normal);
+        gl.vertexAttribPointer(a_Normal, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(a_Normal);
+
+        //disable UV since model has no UV data
+        gl.disableVertexAttribArray(a_UV);
 
         //set uniforms
-        gl.uniformMatrix4fv(program.u_ModelMatrix, false, this.matrix.elements);
-        gl.uniform4fv(program.u_FragColor, this.color);
-
-        //normal matrix
-        let normalMatrix = new Matrix4().setInverseOf(this.matrix);
-        normalMatrix.transpose();
-        gl.uniformMatrix4fv(program.u_NormalMatrix, false, normalMatrix.elements);
+        gl.uniform1i(u_whichTexture, this.textureNum);
+        gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
+        gl.uniform4fv(u_FragColor, this.color);
 
         gl.drawArrays(gl.TRIANGLES, 0, this.modelData.vertices.length / 3);
     }

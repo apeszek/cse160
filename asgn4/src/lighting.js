@@ -166,6 +166,9 @@ let g_lightOn = true;
 let g_lightAngleOffset = 0;
 let g_lightColor = [1.0, 1.0, 1.0];
 
+//OBJ VARIABLES
+let hamster;
+
 //creates the array for the map
 function createMap(){
   for (let x = 0; x < worldSize; x++){
@@ -458,6 +461,8 @@ function main() {
   
   */
 
+  hamster = new Model(gl, "hamster.obj");
+
   newCam = new Camera(canvas);
 
   document.onkeydown = keydown;
@@ -715,22 +720,22 @@ function renderScene(){
   groundCube.matrix.translate(-0.5, 0, -0.5);
   groundCube.render();
 
-  
-  //test cube
-  var testCube = new Cube();
-  if (g_normalOn) testCube.textureNum = -3;
-  testCube.matrix.translate(-1, -2, 0);
-  testCube.matrix.scale(1.5, 1.5, 1.5);
-  //testCube.render();
-
   //test sphere
   var testSphere = new Sphere();
   testSphere.color = [0.0, 0.5, 0.5, 1.0];
   if (g_normalOn) testSphere.textureNum = -3;
-  testSphere.matrix.translate(0,0, -1);
+  testSphere.matrix.translate(0,0, 3);
   testSphere.matrix.scale(1.5, 1.5, 1.5);
   testSphere.render();
 
+  //obj hamster implementation
+  hamster.color = [0.3, 0.5, 0.5, 1.0];
+  if (g_normalOn) hamster.textureNum = -3;
+  hamster.matrix = new Matrix4();
+  hamster.matrix.translate(0, -1.3, -3);
+  hamster.matrix.rotate(90, 0, 1, 0);
+  hamster.matrix.rotate(-90, 1, 0, 0);
+  hamster.render(gl);
 
 //ANIMAL IMPLEMENTATION
   //draws the body - cylinder
@@ -774,8 +779,8 @@ function renderScene(){
 
   var leftHornBase = new Cube();
   leftHornBase.color = [0.6, 0.4, 0.2, 1.0];
-  leftHornBase.textureNum = -3;
-  if (g_normalOn) leftHornBase.textureNum = -2;
+  leftHornBase.textureNum = -2;
+  if (g_normalOn) leftHornBase.textureNum = -3;
   leftHornBase.matrix.set(head.matrix);
   leftHornBase.matrix.rotate(90, 0, 0, 1);
   leftHornBase.matrix.scale(0.2, 0.8, 0.2);
