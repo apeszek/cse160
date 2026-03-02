@@ -35,6 +35,10 @@ var FSHADER_SOURCE = `
   uniform vec3 u_cameraPos;
   varying vec4 v_VertPos;
   uniform bool u_lightOn;
+  uniform vec3 u_spotPos;
+  uniform vec3 u_spotDir;
+  uniform float u_spotCutoff;
+  uniform bool u_spotOn;
   void main() {
     if (u_whichTexture == -3){                    // use normal
       gl_FragColor = vec4((v_Normal+1.0)/2.0, 1.0);
@@ -80,13 +84,15 @@ var FSHADER_SOURCE = `
     vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
 
     //specular
-    float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
+    float specular = pow(max(dot(E,R), 0.0), 60.0) * 0.8;
     
+    vec3 surfaceColor = vec3(gl_FragColor);
+
     //diffuse
-    vec3 diffuse = u_lightColor * vec3(gl_FragColor) * nDotL * 0.7;
+    vec3 diffuse = u_lightColor * surfaceColor * nDotL * 0.7;
 
     //ambient
-    vec3 ambient = vec3(gl_FragColor) * 0.2;
+    vec3 ambient = surfaceColor * 0.2;
 
     //final light
     if (u_lightOn){
@@ -95,7 +101,22 @@ var FSHADER_SOURCE = `
       } else {
         gl_FragColor = vec4(diffuse + ambient, 1.0);
       }
-    } //end light on if statent
+    } //end light on if statement
+
+    //spot light
+    if (u_spotOn) {
+      vec3 spotToFrag = normalize(vec3(v_VertPos) - u_spotPos);
+      float spotCos = dot(spotToFrag, normalize(u_spotDir));
+      if (spotCos > u_spotCutoff) {
+        float spotIntensity = pow(spotCos, 10.0);
+        vec3 spotL = normalize(u_spotPos - vec3(v_VertPos));
+        float spotNDotL = max(dot(N, spotL), 0.0);
+        vec3 spotR = reflect(-spotL, N);
+        float spotSpec = pow(max(dot(E, spotR), 0.0), 64.0) * spotIntensity;
+        vec3 spotContrib = surfaceColor * spotNDotL * spotIntensity + vec3(spotSpec);
+        gl_FragColor = vec4(vec3(gl_FragColor) + spotContrib, 1.0);
+      }
+    }
   }`
 
 // GLOBAL VARIABLES
@@ -117,6 +138,10 @@ let u_lightPos;
 let u_cameraPos;
 let u_lightOn;
 let u_lightColor;
+let u_spotPos;
+let u_spotDir;
+let u_spotCutoff;
+let u_spotOn;
 
 //CONST FOR SHAPES
 const POINT = 0;
@@ -165,6 +190,7 @@ let g_lightPos = [0,1,-2];
 let g_lightOn = true;
 let g_lightAngleOffset = 0;
 let g_lightColor = [1.0, 1.0, 1.0];
+let g_spotOn = false;
 
 //OBJ VARIABLES
 let hamster;
@@ -321,6 +347,12 @@ function connectVariablesToGLSL(){
     return;
   }
 
+  //get the storage location of spotlight uniforms
+  u_spotPos = gl.getUniformLocation(gl.program, "u_spotPos");
+  u_spotDir = gl.getUniformLocation(gl.program, "u_spotDir");
+  u_spotCutoff = gl.getUniformLocation(gl.program, "u_spotCutoff");
+  u_spotOn = gl.getUniformLocation(gl.program, "u_spotOn");
+
   //set up initival value for matrix to identify
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
@@ -332,6 +364,10 @@ function actionsforHTML(){
   //Buttons - Light on/off
   document.getElementById('lightOn').onclick = function() {g_lightOn = true;};
   document.getElementById('lightOff').onclick = function() {g_lightOn = false;};
+
+  //Buttons - Spotlight on/off
+  document.getElementById('spotOn').onclick = function() {g_spotOn = true;};
+  document.getElementById('spotOff').onclick = function() {g_spotOn = false;};
 
   //Buttons - Normal on/off
   document.getElementById('normalOn').onclick = function() {g_normalOn = true;};
@@ -479,9 +515,6 @@ function main() {
   //load textures
   initTextures(gl,0);
   initTextures(gl,1);
-
-  // Specify the color for clearing <canvas>
-  //gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
   requestAnimationFrame(tick);
 }
@@ -687,6 +720,16 @@ function renderScene(){
 
   //pass the camera position to GLSL
   gl.uniform3f(u_cameraPos, newCam.eye.elements[0], newCam.eye.elements[1], newCam.eye.elements[2]);
+
+  //pass spotlight uniforms (flashlight at camera position pointing in look direction)
+  const eye = newCam.eye.elements;
+  const at = newCam.at.elements;
+  let sdx = at[0]-eye[0], sdy = at[1]-eye[1], sdz = at[2]-eye[2];
+  const slen = Math.sqrt(sdx*sdx + sdy*sdy + sdz*sdz);
+  gl.uniform3f(u_spotPos, eye[0], eye[1], eye[2]);
+  gl.uniform3f(u_spotDir, sdx/slen, sdy/slen, sdz/slen);
+  gl.uniform1f(u_spotCutoff, Math.cos(15 * Math.PI / 180));
+  gl.uniform1i(u_spotOn, g_spotOn);
 
   //pass light status
   gl.uniform1i(u_lightOn, g_lightOn);
