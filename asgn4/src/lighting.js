@@ -116,6 +116,7 @@ let u_whichTexture;
 let u_lightPos;
 let u_cameraPos;
 let u_lightOn;
+let u_lightColor;
 
 //CONST FOR SHAPES
 const POINT = 0;
@@ -164,7 +165,6 @@ let g_lightPos = [0,1,-2];
 let g_lightOn = true;
 let g_lightAngleOffset = 0;
 let g_lightColor = [1.0, 1.0, 1.0];
-let u_lightColor;
 
 //creates the array for the map
 function createMap(){
@@ -349,13 +349,11 @@ function actionsforHTML(){
   document.getElementById('lightColorG').addEventListener('mousemove', function(ev) {if (ev.buttons==1) {g_lightColor[1] = this.value/100; renderScene();}});
   document.getElementById('lightColorB').addEventListener('mousemove', function(ev) {if (ev.buttons==1) {g_lightColor[2] = this.value/100; renderScene();}});
 
-
-
+  /*
   //Buttons - Animation on/off
   document.getElementById('animateLegMovementOn').onclick = function() {g_animation = true;};
   document.getElementById('animateLegMovementOff').onclick = function() {g_animation = false;};
 
-  /*
   //Slider - Tail Movement + leg movement
   document.getElementById('legMove').addEventListener('mousemove',function() {g_legMove = this.value; renderScene();});
   document.getElementById('baseTailMove').addEventListener('mousemove',function() {g_baseTailMove = this.value; renderScene();});
@@ -704,7 +702,7 @@ function renderScene(){
   skyCube = new Cube();
   skyCube.color = [0.8, 0.8, 0.8, 1.0];
   if (g_normalOn) skyCube.textureNum = -3;
-  skyCube.matrix.scale(-7,-7,-7);
+  skyCube.matrix.scale(-10,-10,-10);
   skyCube.matrix.translate(-0.5, -0.5, -0.5);
   skyCube.render();
 
@@ -738,7 +736,8 @@ function renderScene(){
   //draws the body - cylinder
   var body = new cylinder();
   body.color = [0.92, 0.73, 0.549, 1.0];
-  if (g_normalOn) body.textureNum = -2;
+  body.textureNum = -2;
+  if (g_normalOn) body.textureNum = -3;
   body.a = 0.4;       // x-radius
   body.b = 0.3;      // z-radius
   body.height = 1.1;
@@ -752,7 +751,8 @@ function renderScene(){
   //draws head - cube
   var head = new Cube();
   head.color = [0.85, 0.66, 0.47, 1.0];
-  if (g_normalOn) head.textureNum = -2;
+  head.textureNum = -2;
+  if (g_normalOn) head.textureNum = -3;
   head.matrix.scale(0.3, 0.35, 0.3);
   head.matrix.translate(-1.1, 0, -.5);
   head.matrix.rotate(0, 1, 0, 0);
@@ -762,7 +762,8 @@ function renderScene(){
   //left 
   var leftHornTop = new Cube();
   leftHornTop.color = [0.6, 0.4, 0.2, 1.0];
-  if (g_normalOn) leftHornTop.textureNum = -2;
+  leftHornTop.textureNum = -2;
+  if (g_normalOn) leftHornTop.textureNum = -3;
   leftHornTop.matrix.rotate(45, 0, 1, 0);
   leftHornTop.matrix.rotate(5, 0, 0, 1);
   leftHornTop.matrix.rotate(-30, 1, 0, 0);
@@ -773,6 +774,7 @@ function renderScene(){
 
   var leftHornBase = new Cube();
   leftHornBase.color = [0.6, 0.4, 0.2, 1.0];
+  leftHornBase.textureNum = -3;
   if (g_normalOn) leftHornBase.textureNum = -2;
   leftHornBase.matrix.set(head.matrix);
   leftHornBase.matrix.rotate(90, 0, 0, 1);
@@ -783,7 +785,8 @@ function renderScene(){
   //right side
   var rightHornBase = new Cube();
   rightHornBase.color = [0.6, 0.4, 0.2, 1.0];
-  if (g_normalOn) rightHornBase.textureNum = -2;
+  rightHornBase.textureNum = -2;
+  if (g_normalOn) rightHornBase.textureNum = -3;
   rightHornBase.matrix.set(head.matrix);
   rightHornBase.matrix.rotate(90, 0, 0, 1);
   rightHornBase.matrix.scale(0.2, 0.8, 0.2);
@@ -792,7 +795,8 @@ function renderScene(){
 
   var rightHornTop = new Cube(); 
   rightHornTop.color = [0.6, 0.4, 0.2, 1.0];
-  if (g_normalOn) rightHornTop.textureNum = -2;
+  rightHornTop.textureNum = -2;
+  if (g_normalOn) rightHornTop.textureNum = -3;
   rightHornTop.matrix.rotate(-45, 0, 1, 0);
   rightHornTop.matrix.rotate(-5, 0, 0, 1);
   rightHornTop.matrix.rotate(-30, 1, 0, 0);
@@ -804,7 +808,8 @@ function renderScene(){
   //draws legs (upper) - cube
   var legUpper1 = new Cube();
   legUpper1.color = [0.85, 0.66, 0.47, 1.0];
-  if (g_normalOn) legUpper1.textureNum = -2;
+  legUpper1.textureNum = -2;
+  if (g_normalOn) legUpper1.textureNum = -3;
   legUpper1.matrix.scale(0.17, 0.32, 0.17);
   legUpper1.matrix.translate(-0.15, -2, 0.5);
   legUpper1.matrix.rotate(0, 1, 0, 0);
@@ -812,7 +817,8 @@ function renderScene(){
 
   var legUpper2 = new Cube();
   legUpper2.color = [0.85, 0.66, 0.47, 1.0];
-  if (g_normalOn) legUpper2.textureNum = -2;
+  legUpper2.textureNum = -2;
+  if (g_normalOn) legUpper2.textureNum = -3;
   legUpper2.matrix.scale(0.17, 0.32, 0.17);
   legUpper2.matrix.translate(-2.7, -2, 0.5);
   legUpper2.matrix.rotate(0, 1, 0, 0);
@@ -820,7 +826,8 @@ function renderScene(){
 
   var legUpper3 = new Cube();
   legUpper3.color = [0.85, 0.66, 0.47, 1.0];
-  if (g_normalOn) legUpper3.textureNum = -2;
+  legUpper3.textureNum = -2;
+  if (g_normalOn) legUpper3.textureNum = -3;
   legUpper3.matrix.scale(0.17, 0.32, 0.17);
   legUpper3.matrix.translate(-2.7, -2, 4.0);
   legUpper3.matrix.rotate(0, 1, 0, 0);
@@ -828,7 +835,8 @@ function renderScene(){
 
   var legUpper4 = new Cube();
   legUpper4.color = [0.85, 0.66, 0.47, 1.0];
-  if (g_normalOn) legUpper4.textureNum = -2;
+  legUpper4.textureNum = -2;
+  if (g_normalOn) legUpper4.textureNum = -3;
   legUpper4.matrix.scale(0.17, 0.32, 0.17);
   legUpper4.matrix.translate(-0.15, -2, 4.0);
   legUpper4.matrix.rotate(0, 1, 0, 0);
@@ -837,7 +845,8 @@ function renderScene(){
   //lower sections of legs (below joint)
   var legLower1 = new Cube();
   legLower1.color = [0.95, 0.75, 0.57, 1.0];
-  if (g_normalOn) legLower1.textureNum = -2;
+  legLower1.textureNum = -2;
+  if (g_normalOn) legLower1.textureNum = -3;
   legLower1.matrix.scale(0.1, 0.2, 0.1);
   legLower1.matrix.translate(0.1, -4, 1.2);
   legLower1.matrix.rotate(0, 1, 0, 0);
@@ -847,7 +856,8 @@ function renderScene(){
 
   var legLower2 = new Cube();
   legLower2.color = [0.95, 0.75, 0.57, 1.0];
-  if (g_normalOn) legLower2.textureNum = -2;
+  legLower2.textureNum = -2;
+  if (g_normalOn) legLower2.textureNum = -3;
   legLower2.matrix.scale(0.1, 0.2, 0.1);
   legLower2.matrix.translate(-4.2, -4, 1.2);
   legLower2.matrix.rotate(0, 1, 0, 0);
@@ -857,7 +867,8 @@ function renderScene(){
 
   var legLower3 = new Cube();
   legLower3.color = [0.95, 0.75, 0.57, 1.0];
-  if (g_normalOn) legLower3.textureNum = -2;
+  legLower3.textureNum = -2;
+  if (g_normalOn) legLower3.textureNum = -3;
   legLower3.matrix.scale(0.1, 0.2, 0.1);
   legLower3.matrix.translate(0.1, -4, 7.0);
   legLower3.matrix.rotate(0, 1, 0, 0);  
@@ -867,7 +878,8 @@ function renderScene(){
 
   var legLower4 = new Cube();
   legLower4.color = [0.95, 0.75, 0.57, 1.0];
-  if (g_normalOn) legLower4.textureNum = -2;
+  legLower4.textureNum = -2;
+  if (g_normalOn) legLower4.textureNum = -3;
   legLower4.matrix.scale(0.1, 0.2, 0.1);
   legLower4.matrix.translate(-4.2, -4, 7.0);
   legLower4.matrix.rotate(0, 1, 0, 0);
@@ -878,7 +890,8 @@ function renderScene(){
   //hoofs (second joint)
   var hoof1 = new Cube();
   hoof1.color = [0.95, 0.95, 0.95, 1.0];
-  if (g_normalOn) hoof1.textureNum = -2;
+  hoof1.textureNum = -2;
+  if (g_normalOn) hoof1.textureNum = -3;
   hoof1.matrix.scale(0.1, 0.1, 0.1);
   hoof1.matrix.translate(0.1, -9, 1.2);
   hoof1.matrix.rotate(0, 1, 0, 0);
@@ -889,7 +902,8 @@ function renderScene(){
 
   var hoof2 = new Cube();
   hoof2.color = [0.95, 0.95, 0.95, 1.0];
-  if (g_normalOn) hoof2.textureNum = -2;
+  hoof2.textureNum = -2;
+  if (g_normalOn) hoof2.textureNum = -3;
   hoof2.matrix.scale(0.1, 0.1, 0.1);
   hoof2.matrix.translate(-4.2, -9, 1.2);
   hoof2.matrix.rotate(0, 1, 0, 0);
@@ -900,7 +914,8 @@ function renderScene(){
 
   var hoof3 = new Cube();
   hoof3.color = [0.95, 0.95, 0.95, 1.0];
-  if (g_normalOn) hoof3.textureNum = -2;
+  hoof3.textureNum = -2;
+  if (g_normalOn) hoof3.textureNum = -3;
   hoof3.matrix.scale(0.1, 0.1, 0.1);
   hoof3.matrix.translate(0.1, -9, 7.0);
   hoof3.matrix.rotate(0, 1, 0, 0);
@@ -911,7 +926,8 @@ function renderScene(){
 
   var hoof4 = new Cube();
   hoof4.color = [0.95, 0.95, 0.95, 1.0];
-  if (g_normalOn) hoof4.textureNum = -2;
+  hoof4.textureNum = -2;
+  if (g_normalOn) hoof4.textureNum = -3;
   hoof4.matrix.scale(0.1, 0.1, 0.1);
   hoof4.matrix.translate(-4.2, -9, 7.0);
   hoof4.matrix.rotate(0, 1, 0, 0);
@@ -924,7 +940,8 @@ function renderScene(){
   //draws tail - cube
   var baseTail = new Cube();
   baseTail.color = [0.6, 0.4, 0.2, 1.0];
-  if (g_normalOn) baseTail.textureNum = -2;
+  baseTail.textureNum = -2;
+  if (g_normalOn) baseTail.textureNum = -3;
   baseTail.matrix.translate(-0.15, 0.1, 0.85);
   baseTail.matrix.rotate(90, 0, 0, 1);
   baseTail.matrix.rotate(g_baseTailMove, 1, 0, 0);
@@ -934,7 +951,8 @@ function renderScene(){
 
   var upperTail = new Cube();
   upperTail.color = [0.6, 0.4, 0.2, 1.0];
-  if (g_normalOn) upperTail.textureNum = -2;
+  upperTail.textureNum = -2;
+  if (g_normalOn) upperTail.textureNum = -3;
   upperTail.matrix = baseTailCoords;
   upperTail.matrix.translate(0, 0, 1);
   upperTail.matrix.rotate(-35, 0, 0, 1);
@@ -947,7 +965,8 @@ function renderScene(){
   //bottom of tail
   var furBall = new Cube();
   furBall.color = [0.75, 0.75, 0.75, 1];
-  if (g_normalOn) furBall.textureNum = -2;
+  furBall.textureNum = -2;
+  if (g_normalOn) furBall.textureNum = -3;
   furBall.matrix = upperTailCoords;
   furBall.matrix.rotate(0, 0, 1, 0);
   furBall.matrix.scale(1, 1, 0.4);
