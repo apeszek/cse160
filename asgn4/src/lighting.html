@@ -7,54 +7,63 @@
   </head>
 
   <body onload="main()">
-    <canvas id="webgl" width="500" height="500">
-    Please use a browser that supports "canvas"
-    </canvas>
-    <p id="numdot"> XXX </p>
-    <br>
-    <button type = "button" id = "lightOn">Light ON</button>
-    <button type = "button" id = "lightOff">Light OFF</button>
-    <br>
-    <button type = "button" id = "normalOn">Normal ON</button>
-    <button type = "button" id = "normalOff">Normal OFF</button>
-    <br>
-    <br>
-    Light X <input type="range" min="-300" max="300" value="0" class="slider" id="lightSlideX">
-    Light Y <input type="range" min="-300" max="300" value="0" class="slider" id="lightSlideY">
-    Light Z <input type="range" min="-300" max="300" value="0" class="slider" id="lightSlideZ">
-    <br>
-    Light Movement <input type="range" min="0" max="180" value="0" class="slider" id="lightSlide">
-    <br>
-    Red Light <input type="range" min="0" max="100" value="100" class="slider" id="lightColorR">
-    Green Light <input type="range" min="0" max="100" value="100" class="slider" id="lightColorG">
-    Blue Light <input type="range" min="0" max="100" value="100" class="slider" id="lightColorB">
-    <br>
-    <br>
-    <b>Key Controls:</b> <br>
-    W: Move forwards <br>
-    S: Move backwards <br>
-    A: Move to the left <br>
-    D: Move to the right <br>
-    Up Arrow: Move up <br>
-    Down Arrow: Move down <br>
-    Q: Pan to the left <br>
-    E: Pan to the right <br>
-    1: Add a block <br>
-    0: Remove a block <br>
-    <br>
-    Animation:
-    <button type = "button" id = "animateLegMovementOn">ON</button>
-    <button type = "button" id = "animateLegMovementOff">OFF</button>
-    <br>
-    Leg Movement (doesn't work while animating)<input type = "range" min = "-30" max = "15" value = "0" class = "slider" id = "legMove">
-    <br>
-    Base Tail Movement (Joint 1) <input type = "range" min = "-50" max = "50" value = "0" class = "slider" id = "baseTailMove">
-    <br>
-    Upper Tail Movement (Joint 2)<input type = "range" min = "-180" max = "0" value = "-90" class = "slider" id = "upperTailMove">
-    <br>
-    Fur on Tail Movement(Joint 3) <input type = "range" min = "-45" max = "45" value = "0" class = "slider" id = "furTail">
-    <br>
-    Camera Angle <input type="range" min="0" max="360" value="5" class="slider" id="angleSlide">
+    <div style="display: flex; align-items: flex-start; gap: 24px;">
+      <div>
+        <canvas id="webgl" width="500" height="500">
+        Please use a browser that supports "canvas"
+        </canvas>
+        <p id="numdot"> XXX </p>
+        Camera Angle <input type="range" min="0" max="360" value="5" class="slider" id="angleSlide">
+        <br>
+        <br>
+        <b>LIGHTING CONTROLS:</b> <br>
+        Lights: 
+        <button type = "button" id = "lightOn">Light ON</button>
+        <button type = "button" id = "lightOff">Light OFF</button>
+        <br>
+        Normals: 
+        <button type = "button" id = "normalOn">Normal ON</button>
+        <button type = "button" id = "normalOff">Normal OFF</button>
+        <br>
+        <br>
+        Light X <input type="range" min="-300" max="300" value="0" class="slider" id="lightSlideX">
+        Light Y <input type="range" min="-300" max="300" value="0" class="slider" id="lightSlideY">
+        Light Z <input type="range" min="-300" max="300" value="0" class="slider" id="lightSlideZ">
+        <br>
+        Red Light <input type="range" min="0" max="100" value="100" class="slider" id="lightColorR">
+        Green Light <input type="range" min="0" max="100" value="100" class="slider" id="lightColorG">
+        Blue Light <input type="range" min="0" max="100" value="100" class="slider" id="lightColorB">
+        <br>
+        Light Movement <input type="range" min="0" max="180" value="0" class="slider" id="lightSlide">
+        <br>
+        <br>
+        <b>ANIMAL ANIMATION TOOLS:</b> <br>
+        Animation:
+        <button type = "button" id = "animateLegMovementOn">ON</button>
+        <button type = "button" id = "animateLegMovementOff">OFF</button>
+        <br>
+        Leg Movement (doesn't work while animating)<input type = "range" min = "-30" max = "15" value = "0" class = "slider" id = "legMove">
+        <br>
+        Base Tail Movement (Joint 1) <input type = "range" min = "-50" max = "50" value = "0" class = "slider" id = "baseTailMove">
+        <br>
+        Upper Tail Movement (Joint 2)<input type = "range" min = "-180" max = "0" value = "-90" class = "slider" id = "upperTailMove">
+        <br>
+        Fur on Tail Movement(Joint 3) <input type = "range" min = "-45" max = "45" value = "0" class = "slider" id = "furTail">
+      </div>
+      <div>
+        <b>Key Controls:</b> <br>
+        W: Move forwards <br>
+        S: Move backwards <br>
+        A: Move to the left <br>
+        D: Move to the right <br>
+        Up Arrow: Move up <br>
+        Down Arrow: Move down <br>
+        Q: Pan to the left <br>
+        E: Pan to the right <br>
+        1: Add a block <br>
+        0: Remove a block <br>
+      </div>
+    </div>
     <p>
   
 

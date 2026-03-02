@@ -462,7 +462,11 @@ function main() {
 
   hamster = new Model(gl, "hamster.obj");
 
+  //sets camera to start at desired coords for lighting assignment (to see all objects)
   newCam = new Camera(canvas);
+  newCam.eye = new Vector3([2.19, 0.00, 0.10]);
+  newCam.at = new Vector3([1.23, 0.00, -0.15]);
+  newCam.updateView();
 
   document.onkeydown = keydown;
 
@@ -574,6 +578,9 @@ function keydown(ev){
   }
   renderScene();
   console.log(ev.keyCode);
+  //const e = newCam.eye.elements;
+  //const a = newCam.at.elements;
+  //console.log(`eye: (${e[0].toFixed(2)}, ${e[1].toFixed(2)}, ${e[2].toFixed(2)})  at: (${a[0].toFixed(2)}, ${a[1].toFixed(2)}, ${a[2].toFixed(2)})`);
 }
 
 function convertCoordEventToGL(ev){
