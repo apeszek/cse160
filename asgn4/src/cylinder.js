@@ -3,6 +3,7 @@ class cylinder {
     this.type = 'cylinder';
     this.color = [1, 1, 1, 1];
     this.matrix = new Matrix4();
+    this.textureNum = -1;
 
     // ellipse radii (x and z)
     this.a = 0.5;

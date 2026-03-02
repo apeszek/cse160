@@ -723,7 +723,7 @@ function renderScene(){
   if (g_normalOn) testCube.textureNum = -3;
   testCube.matrix.translate(-1, -2, 0);
   testCube.matrix.scale(1.5, 1.5, 1.5);
-  testCube.render();
+  //testCube.render();
 
   //test sphere
   var testSphere = new Sphere();
