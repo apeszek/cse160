@@ -721,7 +721,7 @@ function renderScene(){
   //pass the camera position to GLSL
   gl.uniform3f(u_cameraPos, newCam.eye.elements[0], newCam.eye.elements[1], newCam.eye.elements[2]);
 
-  //pass spotlight uniforms (flashlight at camera position pointing in look direction)
+  //pass spotlight uniforms 
   const eye = newCam.eye.elements;
   const at = newCam.at.elements;
   let sdx = at[0]-eye[0], sdy = at[1]-eye[1], sdz = at[2]-eye[2];
