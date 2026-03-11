@@ -94,24 +94,64 @@ function main() {
 
   //car base (square)
   const carMaterial = new THREE.MeshPhongMaterial({color: 0xBF0A30});
-  const baseCarGeometry = new THREE.BoxGeometry(1.5, 0.5, 1);
+  const baseCarGeometry = new THREE.BoxGeometry(1.5, 0.8, 1);
   const baseCarMesh = new THREE.Mesh(baseCarGeometry, carMaterial);
-  baseCarMesh.scale.set(3.5,3.5,3.5);
+  baseCarMesh.scale.set(3.0,3.0,3.0);
   baseCarMesh.position.x = 1.5;
   baseCarMesh.position.z = 4;
   baseCarMesh.position.y = -0.5;
   car.add(baseCarMesh);
+
+  //car front (square)
+  const carFrontGeo = new THREE.BoxGeometry(0.7, 0.5, 1);
+  const carFrontMesh = new THREE.Mesh(carFrontGeo, carMaterial);
+  carFrontMesh.scale.set(3.0, 3.0, 3.0);
+  carFrontMesh.position.x = -1.75;
+  carFrontMesh.position.z = 4;
+  carFrontMesh.position.y = -0.95;
+  car.add(carFrontMesh);
   //objects.push(baseCarMesh);
 
+  //general tire material/geometry
+  const tireGeo = new THREE.CylinderGeometry(4, 4, 2, 33);
+
+  //function to create a new material w specified color
+  function makeTire(x, y) {
+    const material = new THREE.MeshPhongMaterial({color: 0x08494B});
+ 
+    const tire = new THREE.Mesh(tireGeo, material);
+    scene.add(tire);
+ 
+    tire.position.x = x;
+    tire.position.y = y;
+ 
+    return tire;
+  }
+  
+    const tires = [
+    makeTire(-1,  -0.8), //front left
+    makeTire(-1, 0.2), //front right
+    makeTire(1,  -0.8), //back left
+    makeTire(1, 0.2)  //back right
+    ];
 
 
-  //light implementation
+  //LIGHT IMPLEMENTATION
+  //ambient lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+
+  //directional light coming from sun
   const color = 0xFFFFFF;
   const intensity = 3;
   const light = new THREE.DirectionalLight(color, intensity);
-  light.position.set(-1, 2, 4);
+  light.position.set(15, 30, -10);
+  light.target.position.set(0, 0, 0);
   scene.add(light);
+  scene.add(light.target);
   
+
+
 //function to create a new material w specified color
   function makeCubeInstance(geometry, color, x) {
     const material = new THREE.MeshPhongMaterial({color});
@@ -176,6 +216,10 @@ function main() {
 
     //turn on scissor
     renderer.setScissorTest(true);
+
+    // animate sun rotation
+    sun.rotation.y = time * 0.5;
+    sun.rotation.x = time * 0.3;
 
     // view1 - main camera (original view)
     {
