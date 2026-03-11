@@ -12,11 +12,11 @@ function main() {
 
   //create camera
   const fov = 75;
-  const aspect = 2
+  const aspect = 2;
   const near = 0.1;
   const far = 1000;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.set(0, 3, 10);
+  camera.position.set(0, 5, 30);
   camera.lookAt(0, 0, 0);
 
   const cameraHelper = new THREE.CameraHelper(camera);
@@ -51,23 +51,14 @@ function main() {
   scene.background = new THREE.Color ('black');
   scene.add( cameraHelper);
 
-  /*
-  window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-  });
-  */
-
-
   //test box
   const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
   const cube = new THREE.Mesh(cubeGeometry, material);
   //scene.add(cube);
 
-
-  //plane (grass base)
+//OBJECTS
+  //grass base (plane)
   const grassGeo = new THREE.PlaneGeometry(1000, 1000);  // wide left-right, narrow depth
   const grassMaterial = new THREE.MeshPhongMaterial({color: 0x52a447});  // road gray
   const grass = new THREE.Mesh(grassGeo, grassMaterial);
@@ -76,7 +67,7 @@ function main() {
   grass.position.z = 6;
   scene.add(grass);
 
-  //plane (road)
+  //road (plane)
   const planeGeometry = new THREE.PlaneGeometry(1000, 8);  // wide left-right, narrow depth
   const planeMaterial = new THREE.MeshPhongMaterial({color: 0x888888});  // road gray
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -84,19 +75,30 @@ function main() {
   plane.position.y = -2;            // push below the cubes
   plane.position.z = 6;
   scene.add(plane);
+  
+  //sun (dodecahedron)
+  const sunGeo = new THREE.DodecahedronGeometry( 4, 5 );
+  const sunMaterial = new THREE.MeshPhongMaterial({color: 0xFFD300});
+  const sun = new THREE.Mesh(sunGeo, sunMaterial);
+  sun.position.y = 30;
+  sun.position.z = -10;
+  sun.position.x = 15;
+  scene.add(sun);
 
-  //car
+
+  //CAR OBJECT
   const objects = []; //array to hold objects that will rotate
   const car = new THREE.Object3D();
   scene.add(car);
   //objects.push(car);
 
-  const carMaterial = new THREE.MeshPhongMaterial({emissive: 0xBF0A30});
+  //car base (square)
+  const carMaterial = new THREE.MeshPhongMaterial({color: 0xBF0A30});
   const baseCarGeometry = new THREE.BoxGeometry(1.5, 0.5, 1);
   const baseCarMesh = new THREE.Mesh(baseCarGeometry, carMaterial);
   baseCarMesh.scale.set(3.5,3.5,3.5);
   baseCarMesh.position.x = 1.5;
-  baseCarMesh.position.z = 2;
+  baseCarMesh.position.z = 4;
   baseCarMesh.position.y = -0.5;
   car.add(baseCarMesh);
   //objects.push(baseCarMesh);
