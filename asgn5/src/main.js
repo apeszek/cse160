@@ -66,8 +66,18 @@ function main() {
   const cube = new THREE.Mesh(cubeGeometry, material);
   //scene.add(cube);
 
+
+  //plane (grass base)
+  const grassGeo = new THREE.PlaneGeometry(1000, 1000);  // wide left-right, narrow depth
+  const grassMaterial = new THREE.MeshPhongMaterial({color: 0x52a447});  // road gray
+  const grass = new THREE.Mesh(grassGeo, grassMaterial);
+  grass.rotation.x = -Math.PI / 2;  // lay flat
+  grass.position.y = -2.2;            // push below the cubes
+  grass.position.z = 6;
+  scene.add(grass);
+
   //plane (road)
-  const planeGeometry = new THREE.PlaneGeometry(50, 8);  // wide left-right, narrow depth
+  const planeGeometry = new THREE.PlaneGeometry(1000, 8);  // wide left-right, narrow depth
   const planeMaterial = new THREE.MeshPhongMaterial({color: 0x888888});  // road gray
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
   plane.rotation.x = -Math.PI / 2;  // lay flat
