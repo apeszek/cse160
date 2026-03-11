@@ -11,13 +11,14 @@
       }
     }
     </script>
-  <style>
-    * { margin: 0; padding: 0; }
-    canvas { display: block; width: 100vw; height: 100vh; }
-  </style>
+    <link rel="stylesheet" href="cameraControls.css">
   </head>
 <body>
   <canvas id="c"></canvas>
+  <div class="split">
+    <div id="view1" tabindex="1"></div>
+    <div id="view2" tabindex="2"></div>
+  </div>
   <script type="module" src="main.js"></script>
 </body>
   
