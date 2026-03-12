@@ -2,11 +2,14 @@ import * as THREE from 'three';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { MinMaxGUIHelper } from './MinMaxGUIHelper.js';
+import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+import {MTLLoader} from 'three/addons/loaders/MTLLoader.js';
+
 
 function main() {
   const canvas = document.querySelector('#c');
   const view1Elem = document.querySelector('#view1');
-  const view2Elem = document.querySelector('#view2');
+  //const view2Elem = document.querySelector('#view2');
   const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
   //renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -19,7 +22,7 @@ function main() {
   camera.position.set(0, 5, 30);
   camera.lookAt(0, 0, 0);
 
-  const cameraHelper = new THREE.CameraHelper(camera);
+  //const cameraHelper = new THREE.CameraHelper(camera);
 
   function updateCamera() {
     camera.updateProjectionMatrix();
@@ -34,7 +37,7 @@ function main() {
   controls.target.set(0,5,0);
   controls.update();
 
-  const camera2 = new THREE.PerspectiveCamera(
+  /*const camera2 = new THREE.PerspectiveCamera(
     60, //fov
     2, //aspect
     0.1, //near
@@ -45,11 +48,19 @@ function main() {
 
   const controls2 = new OrbitControls(camera2, view2Elem);
   controls.target.set(0,5,0);
-  controls2.update();
+  controls2.update();*/
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color ('black');
-  scene.add( cameraHelper);
+  //scene.background = new THREE.Color ('black');
+  //scene.add( cameraHelper);
+
+  //create instance of OBJLoader
+  {
+    const objLoader = new OBJLoader();
+    objLoader.load('cactus.obj', (root) => {
+    scene.add(root);
+    });
+  }
 
 //OBJECTS
   //grass base (plane)
@@ -78,19 +89,19 @@ function main() {
   sun.position.z = -10;
   sun.position.x = 15;
   scene.add(sun);
-
+  
   //CAR OBJECT
   const car = new THREE.Object3D();
   scene.add(car);
 
   //car base (square)
   const carMaterial = new THREE.MeshPhongMaterial({color: 0xBF0A30});
-  const baseCarGeometry = new THREE.BoxGeometry(1.5, 0.8, 1);
+  const baseCarGeometry = new THREE.BoxGeometry(1.5, 1, 1);
   const baseCarMesh = new THREE.Mesh(baseCarGeometry, carMaterial);
   baseCarMesh.scale.set(3.0,3.0,3.0);
   baseCarMesh.position.x = 1.5;
   baseCarMesh.position.z = 4;
-  baseCarMesh.position.y = -0.45;
+  baseCarMesh.position.y = -0.16;
   car.add(baseCarMesh);
 
   //car front (square)
@@ -101,6 +112,38 @@ function main() {
   carFrontMesh.position.z = 4;
   carFrontMesh.position.y = -0.9;
   car.add(carFrontMesh);
+
+  //general window material/geometry
+  const carWindowGeo = new THREE.PlaneGeometry(3.5,3.5);
+  const carWindowMaterial = new THREE.MeshPhongMaterial({color:0xFFB0C4DE, side: THREE.DoubleSide});
+  const carWindshieldGeo = new THREE.PlaneGeometry(5, 2);
+
+  //function to create windows at (x, y, z)
+  function makeWindows(x, y, z) {
+    const window = new THREE.Mesh(carWindowGeo, carWindowMaterial);
+
+    window.scale.set(0.3, 0.3, 0.3);
+    window.position.set(x,y,z);
+
+    car.add(window);
+    return window;
+  }
+
+  //create side windows
+  const carWindows = [
+    makeWindows(0.3, 0.5, 5.55),  //left 
+    makeWindows(0.3, 0.5, 2.45),  //right 
+  ];
+
+  //create front windshield
+  const windshield = new THREE.Mesh(carWindshieldGeo, carWindowMaterial);
+  windshield.scale.set(0.48, 0.48, 0.48);
+  windshield.rotation.y = Math.PI/2;
+  windshield.position.x = -0.8;
+  windshield.position.y = 0.5;
+  windshield.position.z = 4;
+  car.add(windshield);
+
 
   //general headlight material/geometry
   const headlightOuterGeo = new THREE.CylinderGeometry(2, 2, 1, 50);
@@ -140,7 +183,6 @@ function main() {
      makeHeadlights(-2.8, -0.9, 4.8),  //left
   ];
 
-
   //general tire material/geometry
   const tireGeo = new THREE.CylinderGeometry(4, 4, 2, 33);
   const rimGeo = new THREE.CylinderGeometry(2, 2, 2.1, 7); 
@@ -160,16 +202,24 @@ function main() {
     const rim = new THREE.Mesh(rimGeo, rimMat);
     tire.add(rim);
 
-    scene.add(tire);
+    car.add(tire);
     return tire;
   }
 
+  //make both tires
   const tires = [
     makeTire(-0.5, -1.4, 2.4),  //front right
     makeTire(-0.5, -1.4, 5.6),  //front left
     makeTire(3.0,  -1.4, 2.4),  //back right
     makeTire(3.0,  -1.4, 5.6),  //back left
   ];
+
+
+
+  //cactus
+
+
+
 
 
   //LIGHT IMPLEMENTATION
@@ -186,7 +236,7 @@ function main() {
   scene.add(light);
   scene.add(light.target);
 
-
+  
   //skybox
   const loader = new THREE.TextureLoader();
   const skyTexture = loader.load('blue-sky.jpg');
@@ -248,20 +298,17 @@ function main() {
       //asjust camera for this aspect
       camera.aspect = aspect;
       camera.updateProjectionMatrix();
-      cameraHelper.update();
-      
-      cameraHelper.visible = false;
       renderer.render(scene, camera);
     }
 
-    // view2 - overview camera
+    /*// view2 - overview camera
     {
       const aspect = setScissorForElement(view2Elem);
       camera2.aspect = aspect;
       camera2.updateProjectionMatrix();
       cameraHelper.visible = true;
       renderer.render(scene, camera2);
-    }
+    }*/
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
