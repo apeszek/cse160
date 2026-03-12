@@ -51,12 +51,6 @@ function main() {
   scene.background = new THREE.Color ('black');
   scene.add( cameraHelper);
 
-  //test box
-  const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
-  const cube = new THREE.Mesh(cubeGeometry, material);
-  //scene.add(cube);
-
 //OBJECTS
   //grass base (plane)
   const grassGeo = new THREE.PlaneGeometry(1000, 1000);  // wide left-right, narrow depth
@@ -85,7 +79,6 @@ function main() {
   sun.position.x = 15;
   scene.add(sun);
 
-
   //CAR OBJECT
   const car = new THREE.Object3D();
   scene.add(car);
@@ -112,15 +105,10 @@ function main() {
   //general headlight material/geometry
   const headlightOuterGeo = new THREE.CylinderGeometry(2, 2, 1, 50);
   const headlightOuterMaterial = new THREE.MeshPhongMaterial({color: 0xFF9913});
-  const headlightInnerGeo = new THREE.CylinderGeometry(1, 1, 1.1, 50);
+  const headlightInnerGeo = new THREE.CylinderGeometry(1, 1, 1.2, 50);
   const headlightInnerMaterial = new THREE.MeshPhongMaterial({color: 0xFFAD00});
-  
-  headlightOuter.scale.set(0.2, 0.2, 0.2);
-  headlightOuter.rotation.z = Math.PI /2;
-  headlightOuter.position.x = -2.8;
-  headlightOuter.position.y = -0.9;
-  headlightOuter.position.z = 3.3;
 
+  //function to create a headlight at (x,y,z)
   function makeHeadlights(x, y, z) {
       const headlightOuter = new THREE.Mesh(headlightOuterGeo, headlightOuterMaterial);
 
@@ -132,10 +120,25 @@ function main() {
       //add inner headlight
       const headlightInner = new THREE.Mesh(headlightInnerGeo, headlightInnerMaterial);
       headlightOuter.add(headlightInner);
-      
+
+      //spotlight shooting from inner headlight
+      const spotlight = new THREE.SpotLight(0xffffaa, 50, 30, Math.PI / 8, 0.3);
+      spotlight.position.set(x, y, z);
+      const spotTarget = new THREE.Object3D();
+      spotTarget.position.set(x - 10, y, z);
+      car.add(spotTarget);
+      spotlight.target = spotTarget;
+      car.add(spotlight);
+
       car.add(headlightOuter);
-      return headlight;
+      return headlightOuter;
   }
+
+  //make both headlights
+  const headlights = [
+     makeHeadlights(-2.8, -0.9, 3.3),  //right
+     makeHeadlights(-2.8, -0.9, 4.8),  //left
+  ];
 
 
   //general tire material/geometry
@@ -182,27 +185,7 @@ function main() {
   light.target.position.set(0, 0, 0);
   scene.add(light);
   scene.add(light.target);
-  
 
-/*
-//function to create a new material w specified color
-  function makeCubeInstance(geometry, color, x) {
-    const material = new THREE.MeshPhongMaterial({color});
- 
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
- 
-    cube.position.x = x;
- 
-    return cube;
-  }
-
-  const cubes = [
-  makeCubeInstance(cubeGeometry, 0x44aa88,  0),
-  makeCubeInstance(cubeGeometry, 0x8844aa, -2),
-  makeCubeInstance(cubeGeometry, 0xaa8844,  2),
-    ];
-*/
 
   //skybox
   const loader = new THREE.TextureLoader();
