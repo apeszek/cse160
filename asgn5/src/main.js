@@ -87,10 +87,8 @@ function main() {
 
 
   //CAR OBJECT
-  const objects = []; //array to hold objects that will rotate
   const car = new THREE.Object3D();
   scene.add(car);
-  //objects.push(car);
 
   //car base (square)
   const carMaterial = new THREE.MeshPhongMaterial({color: 0xBF0A30});
@@ -99,7 +97,7 @@ function main() {
   baseCarMesh.scale.set(3.0,3.0,3.0);
   baseCarMesh.position.x = 1.5;
   baseCarMesh.position.z = 4;
-  baseCarMesh.position.y = -0.5;
+  baseCarMesh.position.y = -0.45;
   car.add(baseCarMesh);
 
   //car front (square)
@@ -108,32 +106,67 @@ function main() {
   carFrontMesh.scale.set(3.0, 3.0, 3.0);
   carFrontMesh.position.x = -1.75;
   carFrontMesh.position.z = 4;
-  carFrontMesh.position.y = -0.95;
+  carFrontMesh.position.y = -0.9;
   car.add(carFrontMesh);
-  //objects.push(baseCarMesh);
+
+  //general headlight material/geometry
+  const headlightOuterGeo = new THREE.CylinderGeometry(2, 2, 1, 50);
+  const headlightOuterMaterial = new THREE.MeshPhongMaterial({color: 0xFF9913});
+  const headlightInnerGeo = new THREE.CylinderGeometry(1, 1, 1.1, 50);
+  const headlightInnerMaterial = new THREE.MeshPhongMaterial({color: 0xFFAD00});
+  
+  headlightOuter.scale.set(0.2, 0.2, 0.2);
+  headlightOuter.rotation.z = Math.PI /2;
+  headlightOuter.position.x = -2.8;
+  headlightOuter.position.y = -0.9;
+  headlightOuter.position.z = 3.3;
+
+  function makeHeadlights(x, y, z) {
+      const headlightOuter = new THREE.Mesh(headlightOuterGeo, headlightOuterMaterial);
+
+      //outer headlight
+      headlightOuter.scale.set(0.2, 0.2, 0.2);
+      headlightOuter.rotation.z = Math.PI /2;
+      headlightOuter.position.set(x, y, z);
+      
+      //add inner headlight
+      const headlightInner = new THREE.Mesh(headlightInnerGeo, headlightInnerMaterial);
+      headlightOuter.add(headlightInner);
+      
+      car.add(headlightOuter);
+      return headlight;
+  }
+
 
   //general tire material/geometry
   const tireGeo = new THREE.CylinderGeometry(4, 4, 2, 33);
+  const rimGeo = new THREE.CylinderGeometry(2, 2, 2.1, 7); 
 
-  //function to create a new material w specified color
-  function makeTire(x, y) {
-    const material = new THREE.MeshPhongMaterial({color: 0x08494B});
- 
-    const tire = new THREE.Mesh(tireGeo, material);
+  //function to create a tire at (x, y, z)
+  function makeTire(x, y, z) {
+    const tireMat = new THREE.MeshPhongMaterial({color: 0x222222});
+    const rimMat = new THREE.MeshPhongMaterial({color: 0xcccccc});
+
+    //create tire
+    const tire = new THREE.Mesh(tireGeo, tireMat);
+    tire.scale.set(0.15, 0.15, 0.15);
+    tire.rotation.x = Math.PI / 2;
+    tire.position.set(x, y, z);
+
+    //add rim
+    const rim = new THREE.Mesh(rimGeo, rimMat);
+    tire.add(rim);
+
     scene.add(tire);
- 
-    tire.position.x = x;
-    tire.position.y = y;
- 
     return tire;
   }
-  
-    const tires = [
-    makeTire(-1,  -0.8), //front left
-    makeTire(-1, 0.2), //front right
-    makeTire(1,  -0.8), //back left
-    makeTire(1, 0.2)  //back right
-    ];
+
+  const tires = [
+    makeTire(-0.5, -1.4, 2.4),  //front right
+    makeTire(-0.5, -1.4, 5.6),  //front left
+    makeTire(3.0,  -1.4, 2.4),  //back right
+    makeTire(3.0,  -1.4, 5.6),  //back left
+  ];
 
 
   //LIGHT IMPLEMENTATION
@@ -151,7 +184,7 @@ function main() {
   scene.add(light.target);
   
 
-
+/*
 //function to create a new material w specified color
   function makeCubeInstance(geometry, color, x) {
     const material = new THREE.MeshPhongMaterial({color});
@@ -164,7 +197,6 @@ function main() {
     return cube;
   }
 
-  /*
   const cubes = [
   makeCubeInstance(cubeGeometry, 0x44aa88,  0),
   makeCubeInstance(cubeGeometry, 0x8844aa, -2),
@@ -220,6 +252,11 @@ function main() {
     // animate sun rotation
     sun.rotation.y = time * 0.5;
     sun.rotation.x = time * 0.3;
+
+    // animate tire rotation
+    for (const tire of tires) {
+      tire.rotation.y = time * 2;
+    }
 
     // view1 - main camera (original view)
     {
