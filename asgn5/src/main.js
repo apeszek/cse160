@@ -4,6 +4,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { MinMaxGUIHelper } from './MinMaxGUIHelper.js';
 import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
 import {MTLLoader} from 'three/addons/loaders/MTLLoader.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 function main() {
   const canvas = document.querySelector('#c');
@@ -36,22 +38,7 @@ function main() {
   controls.target.set(0,5,0);
   controls.update();
 
-  /*const camera2 = new THREE.PerspectiveCamera(
-    60, //fov
-    2, //aspect
-    0.1, //near
-    500, //far
-  );
-  camera2.position.set(40,10,30);
-  camera2.lookAt(0,5,0);
-
-  const controls2 = new OrbitControls(camera2, view2Elem);
-  controls.target.set(0,5,0);
-  controls2.update();*/
-
   const scene = new THREE.Scene();
-  //scene.background = new THREE.Color ('black');
-  //scene.add( cameraHelper);
 
   //make multiple cacti
   {
@@ -141,7 +128,24 @@ function main() {
   rightLeg.position.z = -1.3;
   scene.add(rightLeg);
 
-
+  //word for sign
+  const loader2 = new FontLoader();
+  loader2.load('https://cdn.jsdelivr.net/npm/three@0.183.2/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+    const textGeo = new TextGeometry('TURN AROUND', {
+      font: font,
+      size: 0.5,
+      depth: 0.05,
+      curveSegments: 4,
+      bevelEnabled: false,
+    });
+    textGeo.computeBoundingBox();
+    textGeo.center();
+    const textMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+    const textMesh = new THREE.Mesh(textGeo, textMat);
+    textMesh.rotation.y = 95;
+    textMesh.position.set(-16.72, 1, -2.63);
+    scene.add(textMesh);
+  });
   
   //CAR OBJECT
   const car = new THREE.Object3D();
