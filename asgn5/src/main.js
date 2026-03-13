@@ -5,7 +5,6 @@ import { MinMaxGUIHelper } from './MinMaxGUIHelper.js';
 import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
 import {MTLLoader} from 'three/addons/loaders/MTLLoader.js';
 
-
 function main() {
   const canvas = document.querySelector('#c');
   const view1Elem = document.querySelector('#view1');
@@ -54,18 +53,40 @@ function main() {
   //scene.background = new THREE.Color ('black');
   //scene.add( cameraHelper);
 
-  //create instance of OBJLoader
+  //make multiple cacti
   {
-    const objLoader = new OBJLoader();
-    objLoader.load('cactus.obj', (root) => {
-    scene.add(root);
+    const cactusData = [
+      { x: -20, z: -5,  scale: 1.2 },
+      { x: -10, z: 35,  scale: 0.8 },
+      { x:  15, z: -8,  scale: 1.7 },
+      { x:  25, z: 25,  scale: 0.7 },
+      { x: -30, z: 30,  scale: 1.4 },
+      { x:  40, z: -3,  scale: 1.0 },
+      { x: -45, z: 27,  scale: 0.6 },
+      { x:  55, z: 30,  scale: 1.5 },
+    ];
+
+    //call obj/mtl cactus file
+    const mtlLoader = new MTLLoader();
+    mtlLoader.load('../imported/cactus.mtl', (materials) => {
+      materials.preload();
+      const objLoader = new OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.load('../imported/cactus.obj', (root) => {
+        for (const { x, z, scale } of cactusData) {
+          const cactus = root.clone();
+          cactus.scale.setScalar(scale);
+          cactus.position.set(x, -2.2, z);
+          scene.add(cactus);
+        }
+      });
     });
   }
 
 //OBJECTS
   //grass base (plane)
   const grassGeo = new THREE.PlaneGeometry(1000, 1000);  // wide left-right, narrow depth
-  const grassMaterial = new THREE.MeshPhongMaterial({color: 0x52a447});  // road gray
+  const grassMaterial = new THREE.MeshPhongMaterial({color: 0xC2A06E});  // sand/tan
   const grass = new THREE.Mesh(grassGeo, grassMaterial);
   grass.rotation.x = -Math.PI / 2;  // lay flat
   grass.position.y = -2.2;            // push below the cubes
@@ -82,13 +103,45 @@ function main() {
   scene.add(plane);
   
   //sun (dodecahedron)
-  const sunGeo = new THREE.DodecahedronGeometry( 4, 5 );
+  const sunGeo = new THREE.DodecahedronGeometry( 4, 1 );
   const sunMaterial = new THREE.MeshPhongMaterial({color: 0xFFD300});
   const sun = new THREE.Mesh(sunGeo, sunMaterial);
   sun.position.y = 30;
   sun.position.z = -10;
   sun.position.x = 15;
   scene.add(sun);
+  
+  //sign
+  const signMaterial = new THREE.MeshPhongMaterial({color: 0x795C32});
+  const signGeo = new THREE.BoxGeometry(2.5, 1.5, 0.25);
+
+  //base of sign
+  const signBase = new THREE.Mesh(signGeo, signMaterial);
+  signBase.scale.set(2.5, 2.5, 2.5);
+  signBase.rotation.y = 95;
+  signBase.position.x = -17;
+  signBase.position.y = 1;
+  signBase.position.z = -3;
+  scene.add(signBase);
+
+
+  //sign legs
+  const legGeo = new THREE.BoxGeometry(0.5, 1, 0.25);
+  const leftLeg = new THREE.Mesh(legGeo, signMaterial);
+  leftLeg.rotation.y = 95;
+  leftLeg.position.x = -15.2;
+  leftLeg.position.y = -1.375;
+  leftLeg.position.z = -4.7;
+  scene.add(leftLeg);
+
+  const rightLeg = new THREE.Mesh(legGeo, signMaterial);
+  rightLeg.rotation.y = 95;
+  rightLeg.position.x = -18.8;
+  rightLeg.position.y = -1.375;
+  rightLeg.position.z = -1.3;
+  scene.add(rightLeg);
+
+
   
   //CAR OBJECT
   const car = new THREE.Object3D();
@@ -144,7 +197,6 @@ function main() {
   windshield.position.z = 4;
   car.add(windshield);
 
-
   //general headlight material/geometry
   const headlightOuterGeo = new THREE.CylinderGeometry(2, 2, 1, 50);
   const headlightOuterMaterial = new THREE.MeshPhongMaterial({color: 0xFF9913});
@@ -165,7 +217,7 @@ function main() {
       headlightOuter.add(headlightInner);
 
       //spotlight shooting from inner headlight
-      const spotlight = new THREE.SpotLight(0xffffaa, 50, 30, Math.PI / 8, 0.3);
+      const spotlight = new THREE.SpotLight(0xffffaa, 200, 30, Math.PI / 8, 0.3);
       spotlight.position.set(x, y, z);
       const spotTarget = new THREE.Object3D();
       spotTarget.position.set(x - 10, y, z);
@@ -174,14 +226,24 @@ function main() {
       car.add(spotlight);
 
       car.add(headlightOuter);
-      return headlightOuter;
+      return { mesh: headlightOuter, spotlight };
   }
 
   //make both headlights
-  const headlights = [
+  const headlightResults = [
      makeHeadlights(-2.8, -0.9, 3.3),  //right
      makeHeadlights(-2.8, -0.9, 4.8),  //left
   ];
+  const headlights = headlightResults.map(h => h.mesh);
+  const spotlights = headlightResults.map(h => h.spotlight);
+
+  //GUI toggle for headlights
+  const headlightSettings = { headlightsOn: true };
+  gui.add(headlightSettings, 'headlightsOn').name('Headlights').onChange(value => {
+    for (const spotlight of spotlights) {
+      spotlight.visible = value;
+    }
+  });
 
   //general tire material/geometry
   const tireGeo = new THREE.CylinderGeometry(4, 4, 2, 33);
@@ -213,13 +275,34 @@ function main() {
     makeTire(3.0,  -1.4, 2.4),  //back right
     makeTire(3.0,  -1.4, 5.6),  //back left
   ];
+  
+  
+  const loader = new THREE.TextureLoader();
 
+  //function to put royal mail logo (texture)
+  function makeLogo(x, y, z) {
+    const logoTexture = loader.load('royalMailLogo.png');
+    const logoGeo = new THREE.PlaneGeometry(1.55, 1);
+    const logoMaterial = new THREE.MeshBasicMaterial({
+        map: logoTexture,
+        transparent: true,
+        depthWrite: false,
+        alphaTest: 0.1,
+    });
 
+    //create tire
+    const logo = new THREE.Mesh(logoGeo, logoMaterial);
+    logo.position.set(x, y, z);
 
-  //cactus
+    car.add(logo);
+    return logo;
+  }
 
-
-
+  const logos = [
+    makeLogo(2.5, 0.6, 5.51), //left 
+    makeLogo(2.5, 0.6, 2.49) //right
+  ];
+  logos[1].rotation.y = Math.PI;
 
 
   //LIGHT IMPLEMENTATION
@@ -229,16 +312,14 @@ function main() {
 
   //directional light coming from sun
   const color = 0xFFFFFF;
-  const intensity = 3;
+  const intensity = 5;
   const light = new THREE.DirectionalLight(color, intensity);
   light.position.set(15, 30, -10);
   light.target.position.set(0, 0, 0);
   scene.add(light);
   scene.add(light.target);
 
-  
   //skybox
-  const loader = new THREE.TextureLoader();
   const skyTexture = loader.load('blue-sky.jpg');
   skyTexture.colorSpace = THREE.SRGBColorSpace;
   const skyGeo = new THREE.BoxGeometry(1000, 1000, 1000);
@@ -291,7 +372,6 @@ function main() {
       tire.rotation.y = time * 2;
     }
 
-    // view1 - main camera (original view)
     {
       const aspect = setScissorForElement(view1Elem);
 
@@ -301,14 +381,6 @@ function main() {
       renderer.render(scene, camera);
     }
 
-    /*// view2 - overview camera
-    {
-      const aspect = setScissorForElement(view2Elem);
-      camera2.aspect = aspect;
-      camera2.updateProjectionMatrix();
-      cameraHelper.visible = true;
-      renderer.render(scene, camera2);
-    }*/
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
